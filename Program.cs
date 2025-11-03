@@ -88,6 +88,61 @@ while (true)
 }
 
 
+Paciente BuscarPacientePorIdProgram(int id)
+{
+    List<Paciente> listaPacientes = pacienteCRUD.GetPacientes();
+    for (int i = 0; i < listaPacientes.Count; i++)
+    {
+        if (listaPacientes[i].id == id)
+        {
+            return listaPacientes[i];
+        }
+    }
+    return null;
+}
+
+Agendamento BuscarAgendamentoPorIdProgram(int id)
+{
+    List<Agendamento> listaAgendamentos = agendamentoCRUD.GetAgendamentos();
+    for (int i = 0; i < listaAgendamentos.Count; i++)
+    {
+        if (listaAgendamentos[i].id == id)
+        {
+            return listaAgendamentos[i];
+        }
+    }
+    return null;
+}
+
+Veterinario BuscarVeterinarioPorIdProgram(int id)
+{
+    List<Veterinario> listaVeterinarios = veterinarioCRUD.GetVeterinarios();
+    for (int i = 0; i < listaVeterinarios.Count; i++)
+    {
+        if (listaVeterinarios[i].id == id)
+        {
+            return listaVeterinarios[i];
+        }
+    }
+    return null;
+}
+
+void OrdenarAgendamentosPorDataProgram(List<Agendamento> lista)
+{
+    for (int i = 0; i < lista.Count - 1; i++)
+    {
+        for (int j = 0; j < lista.Count - 1 - i; j++)
+        {
+            if (lista[j].dataHora > lista[j + 1].dataHora)
+            {
+                Agendamento temp = lista[j];
+                lista[j] = lista[j + 1];
+                lista[j + 1] = temp;
+            }
+        }
+    }
+}
+
 void RegistrarAtendimento()
 {
     Tela tela = new Tela();
@@ -99,10 +154,28 @@ void RegistrarAtendimento()
     DateTime hoje = DateTime.Today;
     DateTime amanha = hoje.AddDays(1);
     
-    var agendamentosHoje = agendamentoCRUD.GetAgendamentos()
-        .Where(a => a.dataHora >= hoje && a.dataHora < amanha && a.statusDetalhado != "Atendido" && a.statusDetalhado != "Cancelado")
-        .OrderBy(a => a.dataHora)
-        .ToList();
+    List<Agendamento> todosAgendamentos = agendamentoCRUD.GetAgendamentos();
+    List<Agendamento> agendamentosHoje = new List<Agendamento>();
+    for (int i = 0; i < todosAgendamentos.Count; i++)
+    {
+        bool dentroDoPeriodo = todosAgendamentos[i].dataHora >= hoje && todosAgendamentos[i].dataHora < amanha;
+        bool statusValido = true;
+        if (todosAgendamentos[i].statusDetalhado == "Atendido")
+        {
+            statusValido = false;
+        }
+        else if (todosAgendamentos[i].statusDetalhado == "Cancelado")
+        {
+            statusValido = false;
+        }
+        
+        if (dentroDoPeriodo && statusValido)
+        {
+            agendamentosHoje.Add(todosAgendamentos[i]);
+        }
+    }
+    
+    OrdenarAgendamentosPorDataProgram(agendamentosHoje);
     
     Console.WriteLine("Agendamentos de Hoje:");
     Console.WriteLine();
@@ -110,13 +183,25 @@ void RegistrarAtendimento()
     string[] cabecalhos = { "ID", "Hora", "Paciente", "Procedimento" };
     List<string[]> dados = new List<string[]>();
     
-    foreach (var agendamento in agendamentosHoje)
+    for (int i = 0; i < agendamentosHoje.Count; i++)
     {
-        var pacienteInfo = pacienteCRUD.GetPacientes().FirstOrDefault(p => p.id == agendamento.idDoPaciente);
+        Agendamento agendamento = agendamentosHoje[i];
+        Paciente pacienteInfo = BuscarPacientePorIdProgram(agendamento.idDoPaciente);
+        
+        string nomePaciente;
+        if (pacienteInfo != null)
+        {
+            nomePaciente = pacienteInfo.nome;
+        }
+        else
+        {
+            nomePaciente = "N/A";
+        }
+        
         dados.Add(new string[] {
             agendamento.id.ToString(),
             agendamento.dataHora.ToString("HH:mm"),
-            pacienteInfo?.nome ?? "N/A",
+            nomePaciente,
             agendamento.tipoProcedimento
         });
     }
@@ -132,7 +217,7 @@ void RegistrarAtendimento()
     }
     
     // busca agendamento na lista completa
-    var agendamentoSelecionado = agendamentoCRUD.GetAgendamentos().FirstOrDefault(a => a.id == idAgendamento);
+    Agendamento agendamentoSelecionado = BuscarAgendamentoPorIdProgram(idAgendamento);
     if (agendamentoSelecionado == null)
     {
         tela.ExibirErro("Agendamento não encontrado!");
@@ -141,7 +226,7 @@ void RegistrarAtendimento()
     }
     
     // valida se o paciente ainda existe
-    var paciente = pacienteCRUD.GetPacientes().FirstOrDefault(p => p.id == agendamentoSelecionado.idDoPaciente);
+    Paciente paciente = BuscarPacientePorIdProgram(agendamentoSelecionado.idDoPaciente);
     if (paciente == null)
     {
         tela.ExibirErro($"Paciente com ID {agendamentoSelecionado.idDoPaciente} foi excluído!");
@@ -151,7 +236,7 @@ void RegistrarAtendimento()
     }
     
     // valida se o veterinario ainda existe
-    var veterinario = veterinarioCRUD.GetVeterinarios().FirstOrDefault(v => v.id == agendamentoSelecionado.idDoVeterinario);
+    Veterinario veterinario = BuscarVeterinarioPorIdProgram(agendamentoSelecionado.idDoVeterinario);
     if (veterinario == null)
     {
         tela.ExibirErro($"veterinario com ID {agendamentoSelecionado.idDoVeterinario} foi excluído!");

@@ -13,6 +13,24 @@ public class UsuarioCRUD
         this.veterinarioCRUD = null;
     }
 
+    private Veterinario BuscarVeterinarioPorIdUsuario(int idUsuario)
+    {
+        if (veterinarioCRUD == null)
+        {
+            return null;
+        }
+        
+        List<Veterinario> listaVeterinarios = veterinarioCRUD.GetVeterinarios();
+        for (int i = 0; i < listaVeterinarios.Count; i++)
+        {
+            if (listaVeterinarios[i].idDoUsuario == idUsuario)
+            {
+                return listaVeterinarios[i];
+            }
+        }
+        return null;
+    }
+
     public List<Usuario> GetUsuarios()
     {
         return this.usuarios;
@@ -76,8 +94,15 @@ public class UsuarioCRUD
                 string statusVeterinario = "Não";
                 if (veterinarioCRUD != null)
                 {
-                    var veterinario = veterinarioCRUD.GetVeterinarios().FirstOrDefault(v => v.idDoUsuario == usuario.id);
-                    statusVeterinario = veterinario != null ? "Sim" : "Não";
+                    Veterinario veterinario = BuscarVeterinarioPorIdUsuario(usuario.id);
+                    if (veterinario != null)
+                    {
+                        statusVeterinario = "Sim";
+                    }
+                    else
+                    {
+                        statusVeterinario = "Não";
+                    }
                 }
                 Console.WriteLine($"ID: {usuario.id} | Nome: {usuario.nome} | Login: {usuario.login} | Tipo: {usuario.tipoUsuario} | É veterinario: {statusVeterinario}");
             }

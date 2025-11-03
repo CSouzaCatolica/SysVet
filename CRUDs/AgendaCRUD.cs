@@ -11,6 +11,46 @@ public class AgendaCRUD
         this.pacientes = pacientes;
     }
 
+    private Paciente BuscarPacientePorId(int id)
+    {
+        for (int i = 0; i < this.pacientes.Count; i++)
+        {
+            if (this.pacientes[i].id == id)
+            {
+                return this.pacientes[i];
+            }
+        }
+        return null;
+    }
+
+    private Veterinario BuscarVeterinarioPorId(int id)
+    {
+        for (int i = 0; i < this.veterinarios.Count; i++)
+        {
+            if (this.veterinarios[i].id == id)
+            {
+                return this.veterinarios[i];
+            }
+        }
+        return null;
+    }
+
+    private void OrdenarAgendamentosPorData(List<Agendamento> lista)
+    {
+        for (int i = 0; i < lista.Count - 1; i++)
+        {
+            for (int j = 0; j < lista.Count - 1 - i; j++)
+            {
+                if (lista[j].dataHora > lista[j + 1].dataHora)
+                {
+                    Agendamento temp = lista[j];
+                    lista[j] = lista[j + 1];
+                    lista[j + 1] = temp;
+                }
+            }
+        }
+    }
+
     public void ExecutarCRUD(string tipoUsuario)
     {
         Tela tela = new Tela();
@@ -164,10 +204,26 @@ public class AgendaCRUD
         DateTime hoje = DateTime.Today;
         DateTime amanha = hoje.AddDays(1);
         
-        var agendamentosHoje = agendamentos.Where(a => 
-            a.dataHora >= hoje && a.dataHora < amanha &&
-            (idVeterinario == null || a.idDoVeterinario == idVeterinario))
-            .OrderBy(a => a.dataHora).ToList();
+        List<Agendamento> agendamentosHoje = new List<Agendamento>();
+        for (int i = 0; i < agendamentos.Count; i++)
+        {
+            bool dentroDoPeriodo = agendamentos[i].dataHora >= hoje && agendamentos[i].dataHora < amanha;
+            bool filtroVeterinario = true;
+            if (idVeterinario != null)
+            {
+                if (agendamentos[i].idDoVeterinario != idVeterinario)
+                {
+                    filtroVeterinario = false;
+                }
+            }
+            
+            if (dentroDoPeriodo && filtroVeterinario)
+            {
+                agendamentosHoje.Add(agendamentos[i]);
+            }
+        }
+        
+        OrdenarAgendamentosPorData(agendamentosHoje);
         
         Console.WriteLine($"Agenda de Hoje - {hoje:dd/MM/yyyy}");
         Console.WriteLine();
@@ -181,17 +237,46 @@ public class AgendaCRUD
             string[] cabecalhos = { "Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
-            foreach (var agendamento in agendamentosHoje)
+            for (int i = 0; i < agendamentosHoje.Count; i++)
             {
-                var paciente = pacientes.FirstOrDefault(p => p.id == agendamento.idDoPaciente);
-                var veterinario = veterinarios.FirstOrDefault(v => v.id == agendamento.idDoVeterinario);
+                Agendamento agendamento = agendamentosHoje[i];
+                Paciente paciente = BuscarPacientePorId(agendamento.idDoPaciente);
+                Veterinario veterinario = BuscarVeterinarioPorId(agendamento.idDoVeterinario);
                 
-                string status = agendamento.IsVencido() ? "VENCIDO" : agendamento.statusDetalhado;
+                string status;
+                if (agendamento.IsVencido())
+                {
+                    status = "VENCIDO";
+                }
+                else
+                {
+                    status = agendamento.statusDetalhado;
+                }
+                
+                string nomePaciente;
+                if (paciente != null)
+                {
+                    nomePaciente = paciente.nome;
+                }
+                else
+                {
+                    nomePaciente = "N/A";
+                }
+                
+                string nomeVeterinario;
+                if (veterinario != null)
+                {
+                    nomeVeterinario = veterinario.nome;
+                }
+                else
+                {
+                    nomeVeterinario = "N/A";
+                }
                 
                 dados.Add(new string[] {
                     agendamento.dataHora.ToString("HH:mm"),
-                    paciente?.nome ?? "N/A",
-                    veterinario?.nome ?? "N/A",
+                    nomePaciente,
+                    nomeVeterinario,
                     agendamento.tipoProcedimento,
                     status
                 });
@@ -211,10 +296,26 @@ public class AgendaCRUD
         DateTime inicioSemana = DateTime.Today;
         DateTime fimSemana = inicioSemana.AddDays(7);
         
-        var agendamentosSemana = agendamentos.Where(a => 
-            a.dataHora >= inicioSemana && a.dataHora < fimSemana &&
-            (idVeterinario == null || a.idDoVeterinario == idVeterinario))
-            .OrderBy(a => a.dataHora).ToList();
+        List<Agendamento> agendamentosSemana = new List<Agendamento>();
+        for (int i = 0; i < agendamentos.Count; i++)
+        {
+            bool dentroDoPeriodo = agendamentos[i].dataHora >= inicioSemana && agendamentos[i].dataHora < fimSemana;
+            bool filtroVeterinario = true;
+            if (idVeterinario != null)
+            {
+                if (agendamentos[i].idDoVeterinario != idVeterinario)
+                {
+                    filtroVeterinario = false;
+                }
+            }
+            
+            if (dentroDoPeriodo && filtroVeterinario)
+            {
+                agendamentosSemana.Add(agendamentos[i]);
+            }
+        }
+        
+        OrdenarAgendamentosPorData(agendamentosSemana);
         
         Console.WriteLine($"Agenda da Semana - {inicioSemana:dd/MM/yyyy} a {fimSemana.AddDays(-1):dd/MM/yyyy}");
         Console.WriteLine();
@@ -228,18 +329,47 @@ public class AgendaCRUD
             string[] cabecalhos = { "Data", "Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
-            foreach (var agendamento in agendamentosSemana)
+            for (int i = 0; i < agendamentosSemana.Count; i++)
             {
-                var paciente = pacientes.FirstOrDefault(p => p.id == agendamento.idDoPaciente);
-                var veterinario = veterinarios.FirstOrDefault(v => v.id == agendamento.idDoVeterinario);
+                Agendamento agendamento = agendamentosSemana[i];
+                Paciente paciente = BuscarPacientePorId(agendamento.idDoPaciente);
+                Veterinario veterinario = BuscarVeterinarioPorId(agendamento.idDoVeterinario);
                 
-                string status = agendamento.IsVencido() ? "VENCIDO" : agendamento.statusDetalhado;
+                string status;
+                if (agendamento.IsVencido())
+                {
+                    status = "VENCIDO";
+                }
+                else
+                {
+                    status = agendamento.statusDetalhado;
+                }
+                
+                string nomePaciente;
+                if (paciente != null)
+                {
+                    nomePaciente = paciente.nome;
+                }
+                else
+                {
+                    nomePaciente = "N/A";
+                }
+                
+                string nomeVeterinario;
+                if (veterinario != null)
+                {
+                    nomeVeterinario = veterinario.nome;
+                }
+                else
+                {
+                    nomeVeterinario = "N/A";
+                }
                 
                 dados.Add(new string[] {
                     agendamento.dataHora.ToString("dd/MM"),
                     agendamento.dataHora.ToString("HH:mm"),
-                    paciente?.nome ?? "N/A",
-                    veterinario?.nome ?? "N/A",
+                    nomePaciente,
+                    nomeVeterinario,
                     agendamento.tipoProcedimento,
                     status
                 });
@@ -300,7 +430,7 @@ public class AgendaCRUD
             return;
         }
         
-        var veterinario = veterinarios.FirstOrDefault(v => v.id == idVeterinario);
+        Veterinario veterinario = BuscarVeterinarioPorId(idVeterinario);
         if (veterinario == null)
         {
             tela.ExibirErro("veterinario não encontrado!");
@@ -341,10 +471,27 @@ public class AgendaCRUD
         Console.WriteLine("Agendamentos Disponíveis");
         Console.WriteLine();
         
-        var agendamentosDisponiveis = agendamentos.Where(a => 
-            a.dataHora >= DateTime.Now && 
-            (a.statusDetalhado == "Agendado" || a.statusDetalhado == "Confirmado"))
-            .OrderBy(a => a.dataHora).ToList();
+        List<Agendamento> agendamentosDisponiveis = new List<Agendamento>();
+        for (int i = 0; i < agendamentos.Count; i++)
+        {
+            bool dataValida = agendamentos[i].dataHora >= DateTime.Now;
+            bool statusValido = false;
+            if (agendamentos[i].statusDetalhado == "Agendado")
+            {
+                statusValido = true;
+            }
+            else if (agendamentos[i].statusDetalhado == "Confirmado")
+            {
+                statusValido = true;
+            }
+            
+            if (dataValida && statusValido)
+            {
+                agendamentosDisponiveis.Add(agendamentos[i]);
+            }
+        }
+        
+        OrdenarAgendamentosPorData(agendamentosDisponiveis);
         
         if (agendamentosDisponiveis.Count == 0)
         {
@@ -355,15 +502,36 @@ public class AgendaCRUD
             string[] cabecalhos = { "Data/Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
-            foreach (var agendamento in agendamentosDisponiveis)
+            for (int i = 0; i < agendamentosDisponiveis.Count; i++)
             {
-                var paciente = pacientes.FirstOrDefault(p => p.id == agendamento.idDoPaciente);
-                var veterinario = veterinarios.FirstOrDefault(v => v.id == agendamento.idDoVeterinario);
+                Agendamento agendamento = agendamentosDisponiveis[i];
+                Paciente paciente = BuscarPacientePorId(agendamento.idDoPaciente);
+                Veterinario veterinario = BuscarVeterinarioPorId(agendamento.idDoVeterinario);
+                
+                string nomePaciente;
+                if (paciente != null)
+                {
+                    nomePaciente = paciente.nome;
+                }
+                else
+                {
+                    nomePaciente = "N/A";
+                }
+                
+                string nomeVeterinario;
+                if (veterinario != null)
+                {
+                    nomeVeterinario = veterinario.nome;
+                }
+                else
+                {
+                    nomeVeterinario = "N/A";
+                }
                 
                 dados.Add(new string[] {
                     agendamento.dataHora.ToString("dd/MM/yyyy HH:mm"),
-                    paciente?.nome ?? "N/A",
-                    veterinario?.nome ?? "N/A",
+                    nomePaciente,
+                    nomeVeterinario,
                     agendamento.tipoProcedimento,
                     agendamento.statusDetalhado
                 });

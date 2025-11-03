@@ -68,7 +68,16 @@ public class MedicamentoCRUD
         {
             foreach (var medicamento in this.medicamentos)
             {
-                Console.WriteLine($"ID: {medicamento.id} | Nome: {medicamento.nome} | Controlado: {(medicamento.controlado ? "Sim" : "Não")}");
+                string controladoTexto;
+                if (medicamento.controlado)
+                {
+                    controladoTexto = "Sim";
+                }
+                else
+                {
+                    controladoTexto = "Não";
+                }
+                Console.WriteLine($"ID: {medicamento.id} | Nome: {medicamento.nome} | Controlado: {controladoTexto}");
             }
         }
         
@@ -217,7 +226,16 @@ public class MedicamentoCRUD
     {
         Console.WriteLine("Medicamento encontrado:");
         Console.WriteLine($"Nome: {this.medicamentos[this.indice].nome}");
-        Console.WriteLine($"Controlado: {(this.medicamentos[this.indice].controlado ? "Sim" : "Não")}");
+        string controladoTexto;
+        if (this.medicamentos[this.indice].controlado)
+        {
+            controladoTexto = "Sim";
+        }
+        else
+        {
+            controladoTexto = "Não";
+        }
+        Console.WriteLine($"Controlado: {controladoTexto}");
         Console.WriteLine($"Estoque Mínimo: {this.medicamentos[this.indice].estoqueMinimo}");
         Console.WriteLine($"Quantidade em Estoque: {this.medicamentos[this.indice].quantidadeEstoque}");
         Console.WriteLine();

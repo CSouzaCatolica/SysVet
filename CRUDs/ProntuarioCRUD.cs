@@ -85,11 +85,21 @@ public class ProntuarioCRUD
             
             foreach (var prontuario in this.prontuarios)
             {
+                string statusProntuario;
+                if (prontuario.ativo)
+                {
+                    statusProntuario = "Ativo";
+                }
+                else
+                {
+                    statusProntuario = "Inativo";
+                }
+                
                 dados.Add(new string[] {
                     prontuario.id.ToString(),
                     prontuario.idDoPaciente.ToString(),
                     prontuario.dataAbertura.ToString("dd/MM/yyyy"),
-                    prontuario.ativo ? "Ativo" : "Inativo"
+                    statusProntuario
                 });
             }
             
@@ -238,10 +248,30 @@ public class ProntuarioCRUD
                 
                 foreach (var historico in historicos)
                 {
+                    string diagnosticoTruncado;
+                    if (historico.diagnostico.Length > 20)
+                    {
+                        diagnosticoTruncado = historico.diagnostico.Substring(0, 20) + "...";
+                    }
+                    else
+                    {
+                        diagnosticoTruncado = historico.diagnostico;
+                    }
+                    
+                    string tratamentoTruncado;
+                    if (historico.tratamento.Length > 20)
+                    {
+                        tratamentoTruncado = historico.tratamento.Substring(0, 20) + "...";
+                    }
+                    else
+                    {
+                        tratamentoTruncado = historico.tratamento;
+                    }
+                    
                     dados.Add(new string[] {
                         historico.dataAtendimento.ToString("dd/MM/yyyy"),
-                        historico.diagnostico.Length > 20 ? historico.diagnostico.Substring(0, 20) + "..." : historico.diagnostico,
-                        historico.tratamento.Length > 20 ? historico.tratamento.Substring(0, 20) + "..." : historico.tratamento,
+                        diagnosticoTruncado,
+                        tratamentoTruncado,
                         $"{historico.pesoAtual} kg",
                         historico.temperatura
                     });
@@ -279,7 +309,16 @@ public class ProntuarioCRUD
             // verifica se o paciente existe
             if (pacienteCRUD != null)
             {
-                var pacienteExiste = pacienteCRUD.GetPacientes().Any(p => p.id == this.prontuario.idDoPaciente);
+                bool pacienteExiste = false;
+                List<Paciente> listaPacientes = pacienteCRUD.GetPacientes();
+                for (int i = 0; i < listaPacientes.Count; i++)
+                {
+                    if (listaPacientes[i].id == this.prontuario.idDoPaciente)
+                    {
+                        pacienteExiste = true;
+                        break;
+                    }
+                }
                 if (!pacienteExiste)
                 {
                     tela.ExibirErro($"Paciente com ID {this.prontuario.idDoPaciente} não encontrado!");
@@ -349,13 +388,29 @@ public class ProntuarioCRUD
         Console.WriteLine($"ID: {this.prontuarios[this.indice].id}");
         Console.WriteLine($"ID do Paciente: {this.prontuarios[this.indice].idDoPaciente}");
         Console.WriteLine($"Data de Abertura: {this.prontuarios[this.indice].dataAbertura:dd/MM/yyyy}");
-        Console.WriteLine($"Status: {(this.prontuarios[this.indice].ativo ? "Ativo" : "Inativo")}");
+        string statusProntuario;
+        if (this.prontuarios[this.indice].ativo)
+        {
+            statusProntuario = "Ativo";
+        }
+        else
+        {
+            statusProntuario = "Inativo";
+        }
+        Console.WriteLine($"Status: {statusProntuario}");
         Console.WriteLine();
     }
 
     public Prontuario BuscarPorPaciente(int idPaciente)
     {
-        return this.prontuarios.FirstOrDefault(p => p.idDoPaciente == idPaciente && p.ativo);
+        for (int i = 0; i < this.prontuarios.Count; i++)
+        {
+            if (this.prontuarios[i].idDoPaciente == idPaciente && this.prontuarios[i].ativo)
+            {
+                return this.prontuarios[i];
+            }
+        }
+        return null;
     }
 
     public void CriarAutomatico(int idPaciente)

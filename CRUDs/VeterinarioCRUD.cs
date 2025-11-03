@@ -15,6 +15,40 @@ public class VeterinarioCRUD
         this.historicoClinicoCRUD = null;
     }
 
+    private Usuario BuscarUsuarioPorId(int id)
+    {
+        if (usuarioCRUD == null)
+        {
+            return null;
+        }
+        
+        List<Usuario> listaUsuarios = usuarioCRUD.GetUsuarios();
+        for (int i = 0; i < listaUsuarios.Count; i++)
+        {
+            if (listaUsuarios[i].id == id)
+            {
+                return listaUsuarios[i];
+            }
+        }
+        return null;
+    }
+
+    private void OrdenarHistoricoPorDataDesc(List<HistoricoClinico> lista)
+    {
+        for (int i = 0; i < lista.Count - 1; i++)
+        {
+            for (int j = 0; j < lista.Count - 1 - i; j++)
+            {
+                if (lista[j].dataAtendimento < lista[j + 1].dataAtendimento)
+                {
+                    HistoricoClinico temp = lista[j];
+                    lista[j] = lista[j + 1];
+                    lista[j + 1] = temp;
+                }
+            }
+        }
+    }
+
     public void SetUsuarioCRUD(UsuarioCRUD usuarioCRUD)
     {
         this.usuarioCRUD = usuarioCRUD;
@@ -89,8 +123,15 @@ public class VeterinarioCRUD
                 string nomeUsuario = "N/A";
                 if (usuarioCRUD != null)
                 {
-                    var usuario = usuarioCRUD.GetUsuarios().FirstOrDefault(u => u.id == veterinario.idDoUsuario);
-                    nomeUsuario = usuario?.nome ?? "N/A";
+                    Usuario usuario = BuscarUsuarioPorId(veterinario.idDoUsuario);
+                    if (usuario != null)
+                    {
+                        nomeUsuario = usuario.nome;
+                    }
+                    else
+                    {
+                        nomeUsuario = "N/A";
+                    }
                 }
                 
                 dados.Add(new string[] {
@@ -236,7 +277,16 @@ public class VeterinarioCRUD
             // verifica se o usuario existe
             if (usuarioCRUD != null)
             {
-                var usuarioExiste = usuarioCRUD.GetUsuarios().Any(u => u.id == this.veterinario.idDoUsuario);
+                bool usuarioExiste = false;
+                List<Usuario> listaUsuarios = usuarioCRUD.GetUsuarios();
+                for (int i = 0; i < listaUsuarios.Count; i++)
+                {
+                    if (listaUsuarios[i].id == this.veterinario.idDoUsuario)
+                    {
+                        usuarioExiste = true;
+                        break;
+                    }
+                }
                 if (!usuarioExiste)
                 {
                     tela.ExibirErro($"usuario com ID {this.veterinario.idDoUsuario} não encontrado!");
@@ -301,8 +351,15 @@ public class VeterinarioCRUD
         string nomeUsuario = "N/A";
         if (usuarioCRUD != null)
         {
-            var usuario = usuarioCRUD.GetUsuarios().FirstOrDefault(u => u.id == this.veterinarios[this.indice].idDoUsuario);
-            nomeUsuario = usuario?.nome ?? "N/A";
+            Usuario usuario = BuscarUsuarioPorId(this.veterinarios[this.indice].idDoUsuario);
+            if (usuario != null)
+            {
+                nomeUsuario = usuario.nome;
+            }
+            else
+            {
+                nomeUsuario = "N/A";
+            }
         }
         Console.WriteLine($"usuario: {nomeUsuario}");
         Console.WriteLine();
@@ -341,33 +398,68 @@ public class VeterinarioCRUD
             
             if (historicos.Count > 0)
             {
-                var ultimoAtendimento = historicos.OrderByDescending(h => h.dataAtendimento).FirstOrDefault();
-                if (ultimoAtendimento != null)
+                List<HistoricoClinico> historicosOrdenados = new List<HistoricoClinico>();
+                for (int i = 0; i < historicos.Count; i++)
                 {
+                    historicosOrdenados.Add(historicos[i]);
+                }
+                OrdenarHistoricoPorDataDesc(historicosOrdenados);
+                
+                if (historicosOrdenados.Count > 0)
+                {
+                    HistoricoClinico ultimoAtendimento = historicosOrdenados[0];
                     Console.WriteLine($"Último Atendimento: {ultimoAtendimento.dataAtendimento:dd/MM/yyyy HH:mm}");
                     Console.WriteLine($"Diagnóstico: {ultimoAtendimento.diagnostico}");
                 }
                 
-                // conta pacientes atendidos
-                var pacientesAtendidos = historicos.Select(h => h.idDoProntuario).Distinct().Count();
+                Dictionary<int, bool> pacientesUnicos = new Dictionary<int, bool>();
+                for (int i = 0; i < historicos.Count; i++)
+                {
+                    int idProntuario = historicos[i].idDoProntuario;
+                    if (!pacientesUnicos.ContainsKey(idProntuario))
+                    {
+                        pacientesUnicos[idProntuario] = true;
+                    }
+                }
+                int pacientesAtendidos = pacientesUnicos.Count;
                 Console.WriteLine($"Pacientes Únicos Atendidos: {pacientesAtendidos}");
                 
-                // mostra 5 atendimentos
                 Console.WriteLine("\nÚltimos 5 Atendimentos:");
-                var ultimosAtendimentos = historicos.OrderByDescending(h => h.dataAtendimento).Take(5).ToList();
+                List<HistoricoClinico> ultimosAtendimentos = new List<HistoricoClinico>();
+                int limite = 5;
+                if (historicosOrdenados.Count < limite)
+                {
+                    limite = historicosOrdenados.Count;
+                }
+                
+                for (int i = 0; i < limite; i++)
+                {
+                    ultimosAtendimentos.Add(historicosOrdenados[i]);
+                }
                 
                 if (ultimosAtendimentos.Count > 0)
                 {
                     string[] cabecalhos = { "Data", "Prontuario", "Agendamento", "Diagnóstico" };
                     List<string[]> dados = new List<string[]>();
                     
-                    foreach (var historico in ultimosAtendimentos)
+                    for (int i = 0; i < ultimosAtendimentos.Count; i++)
                     {
+                        HistoricoClinico historico = ultimosAtendimentos[i];
+                        string diagnosticoTruncado;
+                        if (historico.diagnostico.Length > 30)
+                        {
+                            diagnosticoTruncado = historico.diagnostico.Substring(0, 30) + "...";
+                        }
+                        else
+                        {
+                            diagnosticoTruncado = historico.diagnostico;
+                        }
+                        
                         dados.Add(new string[] {
                             historico.dataAtendimento.ToString("dd/MM/yyyy HH:mm"),
                             historico.idDoProntuario.ToString(),
                             historico.idDoAgendamento.ToString(),
-                            historico.diagnostico.Length > 30 ? historico.diagnostico.Substring(0, 30) + "..." : historico.diagnostico
+                            diagnosticoTruncado
                         });
                     }
                     

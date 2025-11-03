@@ -87,18 +87,28 @@ public class HistoricoClinicoCRUD
         }
         else
         {
-            string[] cabecalhos = { "ID", "Prontuario", "Agendamento", "veterinario", "Data", "Diagnóstico" };
+            string[] cabecalhos = { "ID", "Prontuário", "Agendamento", "Veterinário", "Data", "Diagnóstico" };
             List<string[]> dados = new List<string[]>();
             
             foreach (var historico in this.historicos)
             {
+                string diagnosticoTruncado;
+                if (historico.diagnostico.Length > 30)
+                {
+                    diagnosticoTruncado = historico.diagnostico.Substring(0, 30) + "...";
+                }
+                else
+                {
+                    diagnosticoTruncado = historico.diagnostico;
+                }
+                
                 dados.Add(new string[] {
                     historico.id.ToString(),
                     historico.idDoProntuario.ToString(),
                     historico.idDoAgendamento.ToString(),
                     historico.idDoVeterinario.ToString(),
                     historico.dataAtendimento.ToString("dd/MM/yyyy"),
-                    historico.diagnostico.Length > 30 ? historico.diagnostico.Substring(0, 30) + "..." : historico.diagnostico
+                    diagnosticoTruncado
                 });
             }
             
@@ -116,16 +126,16 @@ public class HistoricoClinicoCRUD
         Console.WriteLine("Cadastrar Novo Histórico Clínico");
         Console.WriteLine();
         
-        // valida se tem prontuarios
+        // valida se tem prontuários
         if (prontuarioCRUD == null || prontuarioCRUD.GetProntuarios().Count == 0)
         {
-            tela.ExibirErro("Não é possível cadastrar histórico clínico: nenhum prontuario cadastrado.");
-            tela.ExibirAviso("Cadastre pelo menos um prontuario antes de criar histórico clínico.");
+            tela.ExibirErro("Não é possível cadastrar histórico clínico: nenhum prontuário cadastrado.");
+            tela.ExibirAviso("Cadastre pelo menos um prontuário antes de criar histórico clínico.");
             tela.Pausar();
             return;
         }
         
-        // ve se tem agendamentos
+        // valida se tem agendamentos
         if (agendamentoCRUD == null || agendamentoCRUD.GetAgendamentos().Count == 0)
         {
             tela.ExibirErro("Não é possível cadastrar histórico clínico: nenhum agendamento cadastrado.");
@@ -134,11 +144,11 @@ public class HistoricoClinicoCRUD
             return;
         }
         
-        // ve se tem veterinarios
+        // valida se tem veterinários
         if (veterinarioCRUD == null || veterinarioCRUD.GetVeterinarios().Count == 0)
         {
-            tela.ExibirErro("Não é possível cadastrar histórico clínico: nenhum veterinario cadastrado.");
-            tela.ExibirAviso("Cadastre pelo menos um veterinario antes de criar histórico clínico.");
+            tela.ExibirErro("Não é possível cadastrar histórico clínico: nenhum veterinário cadastrado.");
+            tela.ExibirAviso("Cadastre pelo menos um veterinário antes de criar histórico clínico.");
             tela.Pausar();
             return;
         }
@@ -272,26 +282,35 @@ public class HistoricoClinicoCRUD
     {
         Tela tela = new Tela();
         
-        // valida id do prontuario
+        // valida id do prontuário
         while (true)
         {
-            string idProntuarioInput = tela.Perguntar("ID do Prontuario: ");
+            string idProntuarioInput = tela.Perguntar("ID do Prontuário: ");
             if (!int.TryParse(idProntuarioInput, out this.historico.idDoProntuario))
             {
-                tela.ExibirErro("ID do Prontuario inválido! Digite um número.");
+                tela.ExibirErro("ID do Prontuário inválido! Digite um número.");
                 continue;
             }
             
-            // verifica se o prontuario existe
+            // verifica se o prontuário existe
             if (prontuarioCRUD != null)
             {
-                var prontuarioExiste = prontuarioCRUD.GetProntuarios().Any(p => p.id == this.historico.idDoProntuario);
+                bool prontuarioExiste = false;
+                List<Prontuario> listaProntuarios = prontuarioCRUD.GetProntuarios();
+                for (int i = 0; i < listaProntuarios.Count; i++)
+                {
+                    if (listaProntuarios[i].id == this.historico.idDoProntuario)
+                    {
+                        prontuarioExiste = true;
+                        break;
+                    }
+                }
                 if (!prontuarioExiste)
                 {
-                    tela.ExibirErro($"Prontuario com ID {this.historico.idDoProntuario} não encontrado!");
+                    tela.ExibirErro($"Prontuário com ID {this.historico.idDoProntuario} não encontrado!");
                     
-                    // mostra os prontuarios que tem
-                    Console.WriteLine("\nProntuarios disponíveis:");
+                    // mostra os prontuários que tem
+                    Console.WriteLine("\nProntuários disponíveis:");
                     if (prontuarioCRUD.GetProntuarios().Count > 0)
                     {
                         string[] cabecalhos = { "ID", "ID Paciente", "Data Abertura", "Status" };
@@ -299,11 +318,21 @@ public class HistoricoClinicoCRUD
                         
                         foreach (var prontuario in prontuarioCRUD.GetProntuarios())
                         {
+                            string statusProntuario;
+                            if (prontuario.ativo)
+                            {
+                                statusProntuario = "Ativo";
+                            }
+                            else
+                            {
+                                statusProntuario = "Inativo";
+                            }
+                            
                             dados.Add(new string[] {
                                 prontuario.id.ToString(),
                                 prontuario.idDoPaciente.ToString(),
                                 prontuario.dataAbertura.ToString("dd/MM/yyyy"),
-                                prontuario.ativo ? "Ativo" : "Inativo"
+                                statusProntuario
                             });
                         }
                         
@@ -311,7 +340,7 @@ public class HistoricoClinicoCRUD
                     }
                     else
                     {
-                        Console.WriteLine("Nenhum prontuario cadastrado.");
+                        Console.WriteLine("Nenhum prontuário cadastrado.");
                     }
                     Console.WriteLine();
                     continue;
@@ -342,7 +371,7 @@ public class HistoricoClinicoCRUD
                     Console.WriteLine("\nAgendamentos disponíveis:");
                     if (agendamentoCRUD.GetAgendamentos().Count > 0)
                     {
-                        string[] cabecalhos = { "ID", "Paciente", "veterinario", "Data", "Procedimento" };
+                        string[] cabecalhos = { "ID", "Paciente", "Veterinário", "Data", "Procedimento" };
                         List<string[]> dados = new List<string[]>();
                         
                         foreach (var agendamento in agendamentoCRUD.GetAgendamentos())
@@ -369,26 +398,35 @@ public class HistoricoClinicoCRUD
             break;
         }
         
-        // valida id do veterinario
+        // valida id do veterinário
         while (true)
         {
-            string idVeterinarioInput = tela.Perguntar("ID do veterinario: ");
+            string idVeterinarioInput = tela.Perguntar("ID do Veterinário: ");
             if (!int.TryParse(idVeterinarioInput, out this.historico.idDoVeterinario))
             {
-                tela.ExibirErro("ID do veterinario inválido! Digite um número.");
+                tela.ExibirErro("ID do Veterinário inválido! Digite um número.");
                 continue;
             }
             
-            // ve se o veterinario existe
+            // verifica se o veterinário existe
             if (veterinarioCRUD != null)
             {
-                var veterinarioExiste = veterinarioCRUD.GetVeterinarios().Any(v => v.id == this.historico.idDoVeterinario);
+                bool veterinarioExiste = false;
+                List<Veterinario> listaVeterinarios = veterinarioCRUD.GetVeterinarios();
+                for (int i = 0; i < listaVeterinarios.Count; i++)
+                {
+                    if (listaVeterinarios[i].id == this.historico.idDoVeterinario)
+                    {
+                        veterinarioExiste = true;
+                        break;
+                    }
+                }
                 if (!veterinarioExiste)
                 {
-                    tela.ExibirErro($"veterinario com ID {this.historico.idDoVeterinario} não encontrado!");
+                    tela.ExibirErro($"Veterinário com ID {this.historico.idDoVeterinario} não encontrado!");
                     
-                    // mostra os veterinarios que tem
-                    Console.WriteLine("\nveterinarios disponíveis:");
+                    // mostra os veterinários que tem
+                    Console.WriteLine("\nVeterinários disponíveis:");
                     if (veterinarioCRUD.GetVeterinarios().Count > 0)
                     {
                         string[] cabecalhos = { "ID", "Nome", "CRMV", "Especialidade" };
@@ -408,7 +446,7 @@ public class HistoricoClinicoCRUD
                     }
                     else
                     {
-                        Console.WriteLine("Nenhum veterinario cadastrado.");
+                        Console.WriteLine("Nenhum veterinário cadastrado.");
                     }
                     Console.WriteLine();
                     continue;
@@ -463,9 +501,9 @@ public class HistoricoClinicoCRUD
     {
         Console.WriteLine("Histórico encontrado:");
         Console.WriteLine($"ID: {this.historicos[this.indice].id}");
-        Console.WriteLine($"ID do Prontuario: {this.historicos[this.indice].idDoProntuario}");
+        Console.WriteLine($"ID do Prontuário: {this.historicos[this.indice].idDoProntuario}");
         Console.WriteLine($"ID do Agendamento: {this.historicos[this.indice].idDoAgendamento}");
-        Console.WriteLine($"ID do veterinario: {this.historicos[this.indice].idDoVeterinario}");
+        Console.WriteLine($"ID do Veterinário: {this.historicos[this.indice].idDoVeterinario}");
         Console.WriteLine($"Data do Atendimento: {this.historicos[this.indice].dataAtendimento:dd/MM/yyyy HH:mm}");
         Console.WriteLine($"Diagnóstico: {this.historicos[this.indice].diagnostico}");
         Console.WriteLine($"Tratamento: {this.historicos[this.indice].tratamento}");
@@ -478,14 +516,50 @@ public class HistoricoClinicoCRUD
         Console.WriteLine();
     }
 
+    private void OrdenarHistoricoPorData(List<HistoricoClinico> lista)
+    {
+        for (int i = 0; i < lista.Count - 1; i++)
+        {
+            for (int j = 0; j < lista.Count - 1 - i; j++)
+            {
+                if (lista[j].dataAtendimento > lista[j + 1].dataAtendimento)
+                {
+                    HistoricoClinico temp = lista[j];
+                    lista[j] = lista[j + 1];
+                    lista[j + 1] = temp;
+                }
+            }
+        }
+    }
+
     public List<HistoricoClinico> BuscarPorProntuario(int idProntuario)
     {
-        return this.historicos.Where(h => h.idDoProntuario == idProntuario).OrderBy(h => h.dataAtendimento).ToList();
+        List<HistoricoClinico> resultado = new List<HistoricoClinico>();
+        for (int i = 0; i < this.historicos.Count; i++)
+        {
+            if (this.historicos[i].idDoProntuario == idProntuario)
+            {
+                resultado.Add(this.historicos[i]);
+            }
+        }
+        
+        OrdenarHistoricoPorData(resultado);
+        return resultado;
     }
 
     public List<HistoricoClinico> BuscarPorVeterinario(int idVeterinario)
     {
-        return this.historicos.Where(h => h.idDoVeterinario == idVeterinario).OrderBy(h => h.dataAtendimento).ToList();
+        List<HistoricoClinico> resultado = new List<HistoricoClinico>();
+        for (int i = 0; i < this.historicos.Count; i++)
+        {
+            if (this.historicos[i].idDoVeterinario == idVeterinario)
+            {
+                resultado.Add(this.historicos[i]);
+            }
+        }
+        
+        OrdenarHistoricoPorData(resultado);
+        return resultado;
     }
 
     public void CriarEntradaAtendimento(int idProntuario, int idAgendamento, int idVeterinario, string diagnostico, string tratamento, string observacoes, string medicamentos, string vacinas, double peso, string temperatura, string frequencia)
