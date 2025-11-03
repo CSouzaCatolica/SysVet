@@ -82,7 +82,7 @@ public class AgendamentoCRUD
         {
             foreach (var agendamento in this.agendamentos)
             {
-                Console.WriteLine($"ID: {agendamento.id} | Paciente: {agendamento.idDoPaciente} | Veterinário: {agendamento.idDoVeterinario} | Data: {agendamento.dataHora:dd/MM/yyyy HH:mm}");
+                Console.WriteLine($"ID: {agendamento.id} | Paciente: {agendamento.idDoPaciente} | veterinario: {agendamento.idDoVeterinario} | Data: {agendamento.dataHora:dd/MM/yyyy HH:mm}");
             }
         }
         
@@ -98,7 +98,7 @@ public class AgendamentoCRUD
         Console.WriteLine("Cadastrar Novo Agendamento");
         Console.WriteLine();
         
-        // Validação preventiva - verificar se existem pacientes
+        // valida se tem pacientes
         if (pacienteCRUD == null || pacienteCRUD.GetPacientes().Count == 0)
         {
             tela.ExibirErro("Não é possível cadastrar agendamento: nenhum paciente cadastrado.");
@@ -107,11 +107,11 @@ public class AgendamentoCRUD
             return;
         }
         
-        // Validação preventiva - verificar se existem veterinários
+        // valida se tem veterinarios
         if (veterinarioCRUD == null || veterinarioCRUD.GetVeterinarios().Count == 0)
         {
-            tela.ExibirErro("Não é possível cadastrar agendamento: nenhum veterinário cadastrado.");
-            tela.ExibirAviso("Cadastre pelo menos um veterinário antes de criar agendamentos.");
+            tela.ExibirErro("Não é possível cadastrar agendamento: nenhum veterinario cadastrado.");
+            tela.ExibirAviso("Cadastre pelo menos um veterinario antes de criar agendamentos.");
             tela.Pausar();
             return;
         }
@@ -213,7 +213,7 @@ public class AgendamentoCRUD
     {
         Tela tela = new Tela();
         
-        // Validação do ID do Paciente
+        // valida id do paciente
         while (true)
         {
             string idPacienteInput = tela.Perguntar("ID do Paciente: ");
@@ -223,7 +223,7 @@ public class AgendamentoCRUD
                 continue;
             }
             
-            // Verificar se o paciente existe
+            // verifica se o paciente existe
             if (pacienteCRUD != null)
             {
                 var pacienteExiste = pacienteCRUD.GetPacientes().Any(p => p.id == this.agendamento.idDoPaciente);
@@ -231,7 +231,7 @@ public class AgendamentoCRUD
                 {
                     tela.ExibirErro($"Paciente com ID {this.agendamento.idDoPaciente} não encontrado!");
                     
-                    // Mostrar pacientes disponíveis
+                    // mostra os pacientes que tem
                     Console.WriteLine("\nPacientes disponíveis:");
                     if (pacienteCRUD.GetPacientes().Count > 0)
                     {
@@ -262,26 +262,26 @@ public class AgendamentoCRUD
             break;
         }
         
-        // Validação do ID do Veterinário
+        // valida id do veterinario
         while (true)
         {
-            string idVeterinarioInput = tela.Perguntar("ID do Veterinário: ");
+            string idVeterinarioInput = tela.Perguntar("ID do veterinario: ");
             if (!int.TryParse(idVeterinarioInput, out this.agendamento.idDoVeterinario))
             {
-                tela.ExibirErro("ID do Veterinário inválido! Digite um número.");
+                tela.ExibirErro("ID do veterinario inválido! Digite um número.");
                 continue;
             }
             
-            // Verificar se o veterinário existe
+            // verifica se o veterinario existe
             if (veterinarioCRUD != null)
             {
                 var veterinarioExiste = veterinarioCRUD.GetVeterinarios().Any(v => v.id == this.agendamento.idDoVeterinario);
                 if (!veterinarioExiste)
                 {
-                    tela.ExibirErro($"Veterinário com ID {this.agendamento.idDoVeterinario} não encontrado!");
+                    tela.ExibirErro($"veterinario com ID {this.agendamento.idDoVeterinario} não encontrado!");
                     
-                    // Mostrar veterinários disponíveis
-                    Console.WriteLine("\nVeterinários disponíveis:");
+                    // mostra os veterinarios que tem
+                    Console.WriteLine("\nveterinarios disponíveis:");
                     if (veterinarioCRUD.GetVeterinarios().Count > 0)
                     {
                         string[] cabecalhos = { "ID", "Nome", "CRMV", "Especialidade" };
@@ -301,8 +301,8 @@ public class AgendamentoCRUD
                     }
                     else
                     {
-                        Console.WriteLine("Nenhum veterinário cadastrado.");
-                        Console.WriteLine("Não é possível continuar sem veterinários cadastrados.");
+                        Console.WriteLine("Nenhum veterinario cadastrado.");
+                        Console.WriteLine("Não é possível continuar sem veterinarios cadastrados.");
                         tela.Pausar();
                         return;
                     }
@@ -345,7 +345,7 @@ public class AgendamentoCRUD
             {
                 encontrei = true;
                 this.indice = i;
-                // Atualizar o objeto agendamento com os dados encontrados
+                // atualiza os dados do agendamento que achou
                 this.agendamento = this.agendamentos[i];
                 break;
             }
@@ -353,11 +353,23 @@ public class AgendamentoCRUD
         return encontrei;
     }
 
+    public bool ExisteAgendamento(int id)
+    {
+        for (int i = 0; i < this.agendamentos.Count; i++)
+        {
+            if (this.agendamentos[i].id == id)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void MostrarDados()
     {
         Console.WriteLine("Agendamento encontrado:");
         Console.WriteLine($"ID do Paciente: {this.agendamentos[this.indice].idDoPaciente}");
-        Console.WriteLine($"ID do Veterinário: {this.agendamentos[this.indice].idDoVeterinario}");
+        Console.WriteLine($"ID do veterinario: {this.agendamentos[this.indice].idDoVeterinario}");
         Console.WriteLine($"ID da Sala: {this.agendamentos[this.indice].idDaSala}");
         Console.WriteLine($"Data/Hora: {this.agendamentos[this.indice].dataHora}");
         Console.WriteLine($"Duração: {this.agendamentos[this.indice].duracao} minutos");
@@ -412,21 +424,21 @@ public class AgendamentoCRUD
             var veterinario = veterinarioCRUD.GetVeterinarios().FirstOrDefault(v => v.id == this.agendamento.idDoVeterinario);
             if (veterinario != null)
             {
-                Console.WriteLine("\n=== DADOS DO VETERINÁRIO ===");
+                Console.WriteLine("\n=== DADOS DO veterinario ===");
                 Console.WriteLine($"Nome: {veterinario.nome}");
                 Console.WriteLine($"CRMV: {veterinario.crmv}");
                 Console.WriteLine($"Especialidade: {veterinario.especialidade}");
                 
-                // Mostrar dados do usuário se disponível
+                // mostra dados do usuario se tiver
                 if (veterinario.idDoUsuario > 0)
                 {
-                    Console.WriteLine($"ID do Usuário: {veterinario.idDoUsuario}");
+                    Console.WriteLine($"ID do usuario: {veterinario.idDoUsuario}");
                 }
             }
             else
             {
-                Console.WriteLine("\n=== DADOS DO VETERINÁRIO ===");
-                Console.WriteLine($"⚠️  Veterinário com ID {this.agendamento.idDoVeterinario} foi excluído.");
+                Console.WriteLine("\n=== DADOS DO veterinario ===");
+                Console.WriteLine($"⚠️  veterinario com ID {this.agendamento.idDoVeterinario} foi excluído.");
             }
         }
         

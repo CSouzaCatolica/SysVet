@@ -23,10 +23,10 @@ public class AgendaCRUD
             Console.WriteLine("Sistema de Agenda");
             Console.WriteLine();
             
-            // Exibir opções baseadas no tipo de usuário
-            if (tipoUsuario == "Veterinário")
+            // mostra opções baseado no tipo de usuario
+            if (tipoUsuario == "veterinario")
             {
-                tela.ExibirOpcao("1", "Minha Agenda (Veterinário)");
+                tela.ExibirOpcao("1", "Minha Agenda (veterinario)");
                 tela.ExibirOpcao("3", "Agenda Geral");
                 opcoesValidas.AddRange(new List<char> { '1', '3' });
             }
@@ -38,7 +38,7 @@ public class AgendaCRUD
             }
             else if (tipoUsuario == "Gerente")
             {
-                tela.ExibirOpcao("1", "Minha Agenda (Veterinário)");
+                tela.ExibirOpcao("1", "Minha Agenda (veterinario)");
                 tela.ExibirOpcao("2", "Agenda dos Médicos (Recepcionista)");
                 tela.ExibirOpcao("3", "Agenda Geral");
                 opcoesValidas.AddRange(new List<char> { '1', '2', '3' });
@@ -61,10 +61,10 @@ public class AgendaCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Minha Agenda - Veterinário");
+        Console.WriteLine("Minha Agenda - veterinario");
         Console.WriteLine();
         
-        string idVeterinarioInput = tela.Perguntar("Digite seu ID de veterinário: ");
+        string idVeterinarioInput = tela.Perguntar("Digite seu ID de veterinario: ");
         if (!int.TryParse(idVeterinarioInput, out int idVeterinario))
         {
             tela.ExibirErro("ID inválido!");
@@ -111,8 +111,8 @@ public class AgendaCRUD
             Console.WriteLine("Agenda dos Médicos");
             Console.WriteLine();
             
-            tela.ExibirOpcao("1", "Listar Todos os Veterinários");
-            tela.ExibirOpcao("2", "Escolher Veterinário Específico");
+            tela.ExibirOpcao("1", "Listar Todos os veterinarios");
+            tela.ExibirOpcao("2", "Escolher veterinario Específico");
             tela.ExibirOpcao("3", "Agendamentos Disponíveis");
             tela.ExibirOpcao("0", "Voltar");
             tela.ExibirLinhaVazia();
@@ -178,7 +178,7 @@ public class AgendaCRUD
         }
         else
         {
-            string[] cabecalhos = { "Hora", "Paciente", "Veterinário", "Procedimento", "Status" };
+            string[] cabecalhos = { "Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
             foreach (var agendamento in agendamentosHoje)
@@ -225,7 +225,7 @@ public class AgendaCRUD
         }
         else
         {
-            string[] cabecalhos = { "Data", "Hora", "Paciente", "Veterinário", "Procedimento", "Status" };
+            string[] cabecalhos = { "Data", "Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
             foreach (var agendamento in agendamentosSemana)
@@ -256,12 +256,12 @@ public class AgendaCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Lista de Veterinários");
+        Console.WriteLine("Lista de veterinarios");
         Console.WriteLine();
         
         if (veterinarios.Count == 0)
         {
-            Console.WriteLine("Nenhum veterinário cadastrado.");
+            Console.WriteLine("Nenhum veterinario cadastrado.");
         }
         else
         {
@@ -289,10 +289,10 @@ public class AgendaCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Escolher Veterinário");
+        Console.WriteLine("Escolher veterinario");
         Console.WriteLine();
         
-        string idVeterinarioInput = tela.Perguntar("Digite o ID do veterinário: ");
+        string idVeterinarioInput = tela.Perguntar("Digite o ID do veterinario: ");
         if (!int.TryParse(idVeterinarioInput, out int idVeterinario))
         {
             tela.ExibirErro("ID inválido!");
@@ -303,7 +303,7 @@ public class AgendaCRUD
         var veterinario = veterinarios.FirstOrDefault(v => v.id == idVeterinario);
         if (veterinario == null)
         {
-            tela.ExibirErro("Veterinário não encontrado!");
+            tela.ExibirErro("veterinario não encontrado!");
             tela.Pausar();
             return;
         }
@@ -352,7 +352,7 @@ public class AgendaCRUD
         }
         else
         {
-            string[] cabecalhos = { "Data/Hora", "Paciente", "Veterinário", "Procedimento", "Status" };
+            string[] cabecalhos = { "Data/Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
             foreach (var agendamento in agendamentosDisponiveis)

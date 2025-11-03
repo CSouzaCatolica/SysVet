@@ -249,7 +249,7 @@ public class MedicamentoCRUD
             Console.WriteLine("\n=== DETALHES DO MEDICAMENTO ===");
             this.MostrarDados();
             
-            // Verificar estoque baixo
+            // estoque baixo
             var medicamento = this.medicamentos[this.indice];
             if (medicamento.quantidadeEstoque <= medicamento.estoqueMinimo)
             {

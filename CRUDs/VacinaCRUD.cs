@@ -241,9 +241,8 @@ public class VacinaCRUD
             Console.WriteLine("\n=== DETALHES DA VACINA ===");
             this.MostrarDados();
             
-            // Verificar estoque
             var vacina = this.vacinas[this.indice];
-            if (vacina.quantidadeEstoque <= 5) // Estoque baixo para vacinas
+            if (vacina.quantidadeEstoque <= 5) 
             {
                 tela.ExibirAviso($"ATENÇÃO: Estoque baixo! Apenas {vacina.quantidadeEstoque} unidades disponíveis.");
             }

@@ -39,7 +39,7 @@ public class ProntuarioCRUD
         while (true)
         {
             tela.LimparTela();
-            Console.WriteLine("Cadastro de Prontuários");
+            Console.WriteLine("Cadastro de Prontuarios");
             Console.WriteLine();
             
             tela.ExibirOpcao("1", "Listar Todos");
@@ -71,12 +71,12 @@ public class ProntuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Lista de Prontuários");
+        Console.WriteLine("Lista de Prontuarios");
         Console.WriteLine();
         
         if (this.prontuarios.Count == 0)
         {
-            Console.WriteLine("Nenhum prontuário cadastrado.");
+            Console.WriteLine("Nenhum prontuario cadastrado.");
         }
         else
         {
@@ -104,14 +104,14 @@ public class ProntuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Cadastrar Novo Prontuário");
+        Console.WriteLine("Cadastrar Novo Prontuario");
         Console.WriteLine();
         
-        // Validação preventiva - verificar se existem pacientes
+        // tem pacientes
         if (pacienteCRUD == null || pacienteCRUD.GetPacientes().Count == 0)
         {
-            tela.ExibirErro("Não é possível cadastrar prontuário: nenhum paciente cadastrado.");
-            tela.ExibirAviso("Cadastre pelo menos um paciente antes de criar prontuários.");
+            tela.ExibirErro("Não é possível cadastrar prontuario: nenhum paciente cadastrado.");
+            tela.ExibirAviso("Cadastre pelo menos um paciente antes de criar prontuarios.");
             tela.Pausar();
             return;
         }
@@ -122,7 +122,7 @@ public class ProntuarioCRUD
         if (tela.ConfirmarAcao("\nConfirma o cadastro (S/N)? "))
         {
             this.prontuarios.Add(new Prontuario(novoId, this.prontuario.idDoPaciente, this.prontuario.dataAbertura, this.prontuario.ativo));
-            tela.ExibirSucesso("Prontuário cadastrado com sucesso!");
+            tela.ExibirSucesso("Prontuario cadastrado com sucesso!");
         }
         
         tela.Pausar();
@@ -133,10 +133,10 @@ public class ProntuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Alterar Prontuário");
+        Console.WriteLine("Alterar Prontuario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do prontuário a alterar: ");
+        string idInput = tela.Perguntar("Digite o ID do prontuario a alterar: ");
         if (!int.TryParse(idInput, out this.prontuario.id))
         {
             tela.ExibirErro("ID inválido!");
@@ -147,7 +147,7 @@ public class ProntuarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            tela.ExibirErro("Prontuário não encontrado.");
+            tela.ExibirErro("Prontuario não encontrado.");
         }
         else
         {
@@ -160,7 +160,7 @@ public class ProntuarioCRUD
             if (tela.ConfirmarAcao("\nConfirma a alteração (S/N)? "))
             {
                 this.prontuarios[this.indice] = new Prontuario(this.prontuario.id, this.prontuario.idDoPaciente, this.prontuario.dataAbertura, this.prontuario.ativo);
-                tela.ExibirSucesso("Prontuário alterado com sucesso!");
+                tela.ExibirSucesso("Prontuario alterado com sucesso!");
             }
         }
         
@@ -172,10 +172,10 @@ public class ProntuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Excluir Prontuário");
+        Console.WriteLine("Excluir Prontuario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do prontuário a excluir: ");
+        string idInput = tela.Perguntar("Digite o ID do prontuario a excluir: ");
         if (!int.TryParse(idInput, out this.prontuario.id))
         {
             tela.ExibirErro("ID inválido!");
@@ -186,17 +186,17 @@ public class ProntuarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            tela.ExibirErro("Prontuário não encontrado.");
+            tela.ExibirErro("Prontuario não encontrado.");
         }
         else
         {
-            Console.WriteLine("\nProntuário a ser excluído:");
+            Console.WriteLine("\nProntuario a ser excluído:");
             this.MostrarDados();
             
             if (tela.ConfirmarAcao("Confirma a exclusão (S/N)? "))
             {
                 this.prontuarios.RemoveAt(this.indice);
-                tela.ExibirSucesso("Prontuário excluído com sucesso!");
+                tela.ExibirSucesso("Prontuario excluído com sucesso!");
             }
         }
         
@@ -208,10 +208,10 @@ public class ProntuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Visualizar Detalhes do Prontuário");
+        Console.WriteLine("Visualizar Detalhes do Prontuario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do prontuário: ");
+        string idInput = tela.Perguntar("Digite o ID do prontuario: ");
         if (!int.TryParse(idInput, out this.prontuario.id))
         {
             tela.ExibirErro("ID inválido!");
@@ -222,7 +222,7 @@ public class ProntuarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            tela.ExibirErro("Prontuário não encontrado.");
+            tela.ExibirErro("Prontuario não encontrado.");
         }
         else
         {
@@ -254,7 +254,7 @@ public class ProntuarioCRUD
             else
             {
                 Console.WriteLine("\n=== HISTÓRICO CLÍNICO ===");
-                Console.WriteLine("Nenhum histórico clínico encontrado para este prontuário.");
+                Console.WriteLine("Nenhum histórico clínico encontrado para este prontuario.");
             }
 
         }
@@ -266,7 +266,7 @@ public class ProntuarioCRUD
     {
         Tela tela = new Tela();
         
-        // Validação do ID do Paciente
+        // valida id do paciente
         while (true)
         {
             string idPacienteInput = tela.Perguntar("ID do Paciente: ");
@@ -276,7 +276,7 @@ public class ProntuarioCRUD
                 continue;
             }
             
-            // Verificar se o paciente existe
+            // verifica se o paciente existe
             if (pacienteCRUD != null)
             {
                 var pacienteExiste = pacienteCRUD.GetPacientes().Any(p => p.id == this.prontuario.idDoPaciente);
@@ -284,7 +284,6 @@ public class ProntuarioCRUD
                 {
                     tela.ExibirErro($"Paciente com ID {this.prontuario.idDoPaciente} não encontrado!");
                     
-                    // Mostrar pacientes disponíveis
                     Console.WriteLine("\nPacientes disponíveis:");
                     if (pacienteCRUD.GetPacientes().Count > 0)
                     {
@@ -346,7 +345,7 @@ public class ProntuarioCRUD
 
     public void MostrarDados()
     {
-        Console.WriteLine("Prontuário encontrado:");
+        Console.WriteLine("Prontuario encontrado:");
         Console.WriteLine($"ID: {this.prontuarios[this.indice].id}");
         Console.WriteLine($"ID do Paciente: {this.prontuarios[this.indice].idDoPaciente}");
         Console.WriteLine($"Data de Abertura: {this.prontuarios[this.indice].dataAbertura:dd/MM/yyyy}");
@@ -361,7 +360,7 @@ public class ProntuarioCRUD
 
     public void CriarAutomatico(int idPaciente)
     {
-        // Verificar se já existe prontuário ativo para este paciente
+        // tem prontuario ativo pra esse paciente
         if (BuscarPorPaciente(idPaciente) == null)
         {
             int novoId = this.GerarNovoId();

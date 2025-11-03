@@ -190,17 +190,17 @@ public class TutorCRUD
         
         this.tutor.nome = tela.Perguntar("Nome: ");
         
-        // Validação de CPF
+        // valida cpf
         while (true)
         {
             string cpfInput = tela.Perguntar("CPF (apenas números ou formato XXX.XXX.XXX-XX): ");
             
-            // Remover formatação para validação
+            // tira formatação pra validar
             string cpfLimpo = cpfInput.Replace(".", "").Replace("-", "").Replace(" ", "");
             
             if (ValidarCPF(cpfLimpo))
             {
-                this.tutor.cpf = cpfInput; // Manter formato original
+                this.tutor.cpf = cpfInput;
                 break;
             }
             else
@@ -216,25 +216,20 @@ public class TutorCRUD
 
     private bool ValidarCPF(string cpf)
     {
-        // Verificar se tem exatamente 11 dígitos
+        // verifica se tem exatamente 11 
         if (cpf.Length != 11 || !cpf.All(char.IsDigit))
         {
             return false;
         }
         
-        // Verificar se não são todos iguais
-        if (cpf.All(c => c == cpf[0]))
-        {
-            return false;
-        }
         
-        // Verificar se não são todos zeros
+        // verifica se não são todos zeros
         if (cpf == "00000000000")
         {
             return false;
         }
         
-        // Aceitar qualquer CPF com 11 dígitos válidos (sem validação matemática)
+        // aceita qualquer cpf com 11 digitos 
         return true;
     }
 
@@ -247,7 +242,6 @@ public class TutorCRUD
             {
                 encontrei = true;
                 this.indice = i;
-                // Atualizar o objeto tutor com os dados encontrados
                 this.tutor = this.tutores[i];
                 break;
             }
