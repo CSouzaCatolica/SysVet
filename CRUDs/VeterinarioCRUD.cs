@@ -39,7 +39,7 @@ public class VeterinarioCRUD
         while (true)
         {
             tela.LimparTela();
-            Console.WriteLine("Cadastro de Veterinários");
+            Console.WriteLine("Cadastro de veterinarios");
             Console.WriteLine();
             
             tela.ExibirOpcao("1", "Listar Todos");
@@ -71,17 +71,17 @@ public class VeterinarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Lista de Veterinários");
+        Console.WriteLine("Lista de veterinarios");
         Console.WriteLine();
         
         if (this.veterinarios.Count == 0)
         {
-            Console.WriteLine("Nenhum veterinário cadastrado.");
+            Console.WriteLine("Nenhum veterinario cadastrado.");
         }
         else
         {
-            // Usar tabela para melhor visualização
-            string[] cabecalhos = { "ID", "Nome", "CRMV", "Especialidade", "Usuário Vinculado" };
+            // usa tabela pra ver melhor
+            string[] cabecalhos = { "ID", "Nome", "CRMV", "Especialidade", "usuario Vinculado" };
             List<string[]> dados = new List<string[]>();
             
             foreach (var veterinario in this.veterinarios)
@@ -114,14 +114,14 @@ public class VeterinarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Cadastrar Novo Veterinário");
+        Console.WriteLine("Cadastrar Novo veterinario");
         Console.WriteLine();
         
-        // Validação preventiva - verificar se existem usuários
+        // valida se tem usuarios
         if (usuarioCRUD == null || usuarioCRUD.GetUsuarios().Count == 0)
         {
-            tela.ExibirErro("Não é possível cadastrar veterinário: nenhum usuário cadastrado.");
-            tela.ExibirAviso("Cadastre pelo menos um usuário antes de criar veterinários.");
+            tela.ExibirErro("Não é possível cadastrar veterinario: nenhum usuario cadastrado.");
+            tela.ExibirAviso("Cadastre pelo menos um usuario antes de criar veterinarios.");
             tela.Pausar();
             return;
         }
@@ -133,7 +133,7 @@ public class VeterinarioCRUD
         if (confirma.ToLower() == "s")
         {
             this.veterinarios.Add(new Veterinario(novoId, this.veterinario.idDoUsuario, this.veterinario.nome, this.veterinario.crmv, this.veterinario.especialidade));
-            Console.WriteLine("Veterinário cadastrado com sucesso!");
+            Console.WriteLine("veterinario cadastrado com sucesso!");
         }
         
         Console.WriteLine("\nPressione qualquer tecla para continuar...");
@@ -145,10 +145,10 @@ public class VeterinarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Alterar Veterinário");
+        Console.WriteLine("Alterar veterinario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do veterinário a alterar: ");
+        string idInput = tela.Perguntar("Digite o ID do veterinario a alterar: ");
         if (!int.TryParse(idInput, out this.veterinario.id))
         {
             Console.WriteLine("ID inválido!");
@@ -159,7 +159,7 @@ public class VeterinarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            Console.WriteLine("Veterinário não encontrado.");
+            Console.WriteLine("veterinario não encontrado.");
         }
         else
         {
@@ -173,7 +173,7 @@ public class VeterinarioCRUD
             if (confirma.ToLower() == "s")
             {
                 this.veterinarios[this.indice] = new Veterinario(this.veterinario.id, this.veterinario.idDoUsuario, this.veterinario.nome, this.veterinario.crmv, this.veterinario.especialidade);
-                Console.WriteLine("Veterinário alterado com sucesso!");
+                Console.WriteLine("veterinario alterado com sucesso!");
             }
         }
         
@@ -186,10 +186,10 @@ public class VeterinarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Excluir Veterinário");
+        Console.WriteLine("Excluir veterinario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do veterinário a excluir: ");
+        string idInput = tela.Perguntar("Digite o ID do veterinario a excluir: ");
         if (!int.TryParse(idInput, out this.veterinario.id))
         {
             Console.WriteLine("ID inválido!");
@@ -200,18 +200,18 @@ public class VeterinarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            Console.WriteLine("Veterinário não encontrado.");
+            Console.WriteLine("veterinario não encontrado.");
         }
         else
         {
-            Console.WriteLine("\nVeterinário a ser excluído:");
+            Console.WriteLine("\nveterinario a ser excluído:");
             this.MostrarDados();
             
             string confirma = tela.Perguntar("Confirma a exclusão (S/N)? ");
             if (confirma.ToLower() == "s")
             {
                 this.veterinarios.RemoveAt(this.indice);
-                Console.WriteLine("Veterinário excluído com sucesso!");
+                Console.WriteLine("veterinario excluído com sucesso!");
             }
         }
         
@@ -223,26 +223,26 @@ public class VeterinarioCRUD
     {
         Tela tela = new Tela();
         
-        // Validação do ID do Usuário
+        // valida id do usuario
         while (true)
         {
-            string idUsuarioInput = tela.Perguntar("ID do Usuário: ");
+            string idUsuarioInput = tela.Perguntar("ID do usuario: ");
             if (!int.TryParse(idUsuarioInput, out this.veterinario.idDoUsuario))
             {
-                tela.ExibirErro("ID do Usuário inválido! Digite um número.");
+                tela.ExibirErro("ID do usuario inválido! Digite um número.");
                 continue;
             }
             
-            // Verificar se o usuário existe
+            // verifica se o usuario existe
             if (usuarioCRUD != null)
             {
                 var usuarioExiste = usuarioCRUD.GetUsuarios().Any(u => u.id == this.veterinario.idDoUsuario);
                 if (!usuarioExiste)
                 {
-                    tela.ExibirErro($"Usuário com ID {this.veterinario.idDoUsuario} não encontrado!");
+                    tela.ExibirErro($"usuario com ID {this.veterinario.idDoUsuario} não encontrado!");
                     
-                    // Mostrar usuários disponíveis
-                    Console.WriteLine("\nUsuários disponíveis:");
+                    // mostra os usuarios que tem
+                    Console.WriteLine("\nusuarios disponíveis:");
                     if (usuarioCRUD.GetUsuarios().Count > 0)
                     {
                         string[] cabecalhos = { "ID", "Nome", "Login", "Tipo" };
@@ -262,7 +262,7 @@ public class VeterinarioCRUD
                     }
                     else
                     {
-                        Console.WriteLine("Nenhum usuário cadastrado.");
+                        Console.WriteLine("Nenhum usuario cadastrado.");
                     }
                     Console.WriteLine();
                     continue;
@@ -293,7 +293,7 @@ public class VeterinarioCRUD
 
     public void MostrarDados()
     {
-        Console.WriteLine("Veterinário encontrado:");
+        Console.WriteLine("veterinario encontrado:");
         Console.WriteLine($"Nome: {this.veterinarios[this.indice].nome}");
         Console.WriteLine($"CRMV: {this.veterinarios[this.indice].crmv}");
         Console.WriteLine($"Especialidade: {this.veterinarios[this.indice].especialidade}");
@@ -304,7 +304,7 @@ public class VeterinarioCRUD
             var usuario = usuarioCRUD.GetUsuarios().FirstOrDefault(u => u.id == this.veterinarios[this.indice].idDoUsuario);
             nomeUsuario = usuario?.nome ?? "N/A";
         }
-        Console.WriteLine($"Usuário: {nomeUsuario}");
+        Console.WriteLine($"usuario: {nomeUsuario}");
         Console.WriteLine();
     }
 
@@ -313,10 +313,10 @@ public class VeterinarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Visualizar Detalhes do Veterinário");
+        Console.WriteLine("Visualizar Detalhes do veterinario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do veterinário: ");
+        string idInput = tela.Perguntar("Digite o ID do veterinario: ");
         if (!int.TryParse(idInput, out this.veterinario.id))
         {
             tela.ExibirErro("ID inválido!");
@@ -327,11 +327,11 @@ public class VeterinarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            tela.ExibirErro("Veterinário não encontrado.");
+            tela.ExibirErro("veterinario não encontrado.");
         }
         else
         {
-            Console.WriteLine("\n=== DETALHES DO VETERINÁRIO ===");
+            Console.WriteLine("\n=== DETALHES DO veterinario ===");
             this.MostrarDados();
             
             var historicos = historicoClinicoCRUD.BuscarPorVeterinario(this.veterinario.id);
@@ -348,17 +348,17 @@ public class VeterinarioCRUD
                     Console.WriteLine($"Diagnóstico: {ultimoAtendimento.diagnostico}");
                 }
                 
-                // Contar pacientes únicos atendidos
+                // conta pacientes atendidos
                 var pacientesAtendidos = historicos.Select(h => h.idDoProntuario).Distinct().Count();
                 Console.WriteLine($"Pacientes Únicos Atendidos: {pacientesAtendidos}");
                 
-                // Mostrar últimos 5 atendimentos
+                // mostra 5 atendimentos
                 Console.WriteLine("\nÚltimos 5 Atendimentos:");
                 var ultimosAtendimentos = historicos.OrderByDescending(h => h.dataAtendimento).Take(5).ToList();
                 
                 if (ultimosAtendimentos.Count > 0)
                 {
-                    string[] cabecalhos = { "Data", "Prontuário", "Agendamento", "Diagnóstico" };
+                    string[] cabecalhos = { "Data", "Prontuario", "Agendamento", "Diagnóstico" };
                     List<string[]> dados = new List<string[]>();
                     
                     foreach (var historico in ultimosAtendimentos)

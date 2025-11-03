@@ -1,12 +1,12 @@
-# Sistema Veterinário - Console
+# Sistema veterinario - Console
 
 Sistema de gestão para clínica veterinária desenvolvido em C# para console.
 
 ## Estrutura do Projeto
 
-- **Classes de Entidade**: 15 classes representando todas as entidades do sistema (Tutor, Paciente, Veterinário, etc.)
+- **Classes de Entidade**: 15 classes representando todas as entidades do sistema (Tutor, Paciente, veterinario, etc.)
 - **CRUDs**: Operações de Create, Read, Update e Delete para cada entidade principal
-- **Menus por Perfil**: 3 perfis de usuário com menus específicos (Recepcionista, Veterinário, Gerente)
+- **Menus por Perfil**: 3 perfis de usuario com menus específicos (Recepcionista, veterinario, Gerente)
 
 ## Como Executar
 
@@ -29,16 +29,16 @@ csc *.cs
 - Gerenciar Pacientes
 - Gerenciar Agendamentos
 
-### Perfil: Veterinário
+### Perfil: veterinario
 - Consultar Agendamentos
-- Gerenciar Prontuários (em construção)
+- Gerenciar Prontuarios (em construção)
 - Registrar Atendimentos (em construção)
 - Estoque (Medicamentos e Vacinas)
 
 ### Perfil: Gerente
 - Acesso total a todas as funcionalidades
-- Gerenciar Veterinários
-- Gerenciar Usuários
+- Gerenciar veterinarios
+- Gerenciar usuarios
 - Estoque completo
 - Relatórios (em construção)
 
@@ -46,15 +46,15 @@ csc *.cs
 
 O sistema já vem com dados hardcoded para teste:
 
-**Usuários:**
+**usuarios:**
 - Maria Silva (Recepcionista)
-- Dr. João Santos (Veterinário)
+- Dr. João Santos (veterinario)
 - Ana Costa (Gerente)
 
 **Dados Cadastrados:**
 - 2 Tutores
 - 3 Pacientes
-- 2 Veterinários
+- 2 veterinarios
 
 ## Tecnologias
 

@@ -1,6 +1,6 @@
 ﻿Tela tela = new Tela();
 
-// Inicializar CRUDs
+// inicizliza crds
 TutorCRUD tutorCRUD = new TutorCRUD();
 PacienteCRUD pacienteCRUD = new PacienteCRUD();
 VeterinarioCRUD veterinarioCRUD = new VeterinarioCRUD();
@@ -11,7 +11,7 @@ VacinaCRUD vacinaCRUD = new VacinaCRUD();
 ProntuarioCRUD prontuarioCRUD = new ProntuarioCRUD();
 HistoricoClinicoCRUD historicoClinicoCRUD = new HistoricoClinicoCRUD();
 
-// Configurar referências entre CRUDs
+// liga os cruds um com o outro pra ter uma exibicao melhor nos detalhes
 tutorCRUD.SetPacienteCRUD(pacienteCRUD);
 pacienteCRUD.SetTutorCRUD(tutorCRUD);
 pacienteCRUD.SetProntuarioCRUD(prontuarioCRUD);
@@ -30,12 +30,11 @@ AgendaCRUD agendaCRUD = new AgendaCRUD(agendamentoCRUD.GetAgendamentos(), veteri
 RelatoriosCRUD relatoriosCRUD = new RelatoriosCRUD(agendamentoCRUD.GetAgendamentos(), pacienteCRUD.GetPacientes(), 
     veterinarioCRUD.GetVeterinarios(), historicoClinicoCRUD.GetHistoricos(), medicamentoCRUD.GetMedicamentos(), vacinaCRUD.GetVacinas());
 
-// Inicializar dados hardcoded
+// Seed inicial pra gente testar os dados
 InicializarDados();
 
 void InicializarDados()
 {
-    // Verificar se já existem dados para evitar duplicatas
     bool jaExistemDados = usuarioCRUD.GetUsuarios().Count > 0 || 
                           veterinarioCRUD.GetVeterinarios().Count > 0 ||
                           tutorCRUD.GetTutores().Count > 0 ||
@@ -43,24 +42,15 @@ void InicializarDados()
     
     if (jaExistemDados)
     {
-        return; // Dados já existem, não inicializar novamente
+        return;
     }
     
-    // Criar 1 Usuário para Veterinário
-    usuarioCRUD.GetUsuarios().Add(new Usuario(1, "Dr. João Silva", "joao.silva", "123456", "Veterinário"));
-    
-    // Criar 1 Veterinário
+    usuarioCRUD.GetUsuarios().Add(new Usuario(1, "Dr. João Silva", "joao.silva", "123456", "veterinario"));
     veterinarioCRUD.GetVeterinarios().Add(new Veterinario(1, 1, "Dr. João Silva", "CRMV-12345", "Clínica Geral"));
-    
-    // Criar 2 Tutores
     tutorCRUD.GetTutores().Add(new Tutor(1, "Maria Santos", "123.456.789-00", "(11) 98765-4321", "maria@email.com", "Rua A, 123"));
     tutorCRUD.GetTutores().Add(new Tutor(2, "Pedro Costa", "987.654.321-00", "(11) 91234-5678", "pedro@email.com", "Rua B, 456"));
-    
-    // Criar 2 Pacientes
     pacienteCRUD.GetPacientes().Add(new Paciente(1, 1, "Rex", "Cão", "Labrador", 25.5, "Ativo"));
     pacienteCRUD.GetPacientes().Add(new Paciente(2, 2, "Luna", "Gato", "Persa", 4.2, "Ativo"));
-    
-    // Criar prontuários automáticos para os pacientes
     prontuarioCRUD.CriarAutomatico(1);
     prontuarioCRUD.CriarAutomatico(2);
 }
@@ -73,7 +63,7 @@ while (true)
     tela.MostrarMensagem("Selecione para Entrar:");
     
     tela.ExibirOpcao("1", "Recepcionista");
-    tela.ExibirOpcao("2", "Veterinário");
+    tela.ExibirOpcao("2", "veterinario");
     tela.ExibirOpcao("3", "Gerente");
     tela.ExibirOpcao("0", "Sair");
     tela.ExibirLinhaVazia();
@@ -97,7 +87,6 @@ while (true)
     }
 }
 
-// Função InicializarDados() removida - dados não são mais recriados automaticamente
 
 void RegistrarAtendimento()
 {
@@ -107,7 +96,6 @@ void RegistrarAtendimento()
     Console.WriteLine("Registrar Atendimento");
     Console.WriteLine();
     
-    // Listar agendamentos do dia
     DateTime hoje = DateTime.Today;
     DateTime amanha = hoje.AddDays(1);
     
@@ -143,7 +131,7 @@ void RegistrarAtendimento()
         return;
     }
     
-    // Buscar agendamento na lista completa
+    // busca agendamento na lista completa
     var agendamentoSelecionado = agendamentoCRUD.GetAgendamentos().FirstOrDefault(a => a.id == idAgendamento);
     if (agendamentoSelecionado == null)
     {
@@ -152,7 +140,7 @@ void RegistrarAtendimento()
         return;
     }
     
-    // Validar se o paciente ainda existe
+    // valida se o paciente ainda existe
     var paciente = pacienteCRUD.GetPacientes().FirstOrDefault(p => p.id == agendamentoSelecionado.idDoPaciente);
     if (paciente == null)
     {
@@ -162,21 +150,21 @@ void RegistrarAtendimento()
         return;
     }
     
-    // Validar se o veterinário ainda existe
+    // valida se o veterinario ainda existe
     var veterinario = veterinarioCRUD.GetVeterinarios().FirstOrDefault(v => v.id == agendamentoSelecionado.idDoVeterinario);
     if (veterinario == null)
     {
-        tela.ExibirErro($"Veterinário com ID {agendamentoSelecionado.idDoVeterinario} foi excluído!");
-        tela.ExibirAviso("Não é possível registrar atendimento sem um veterinário válido.");
+        tela.ExibirErro($"veterinario com ID {agendamentoSelecionado.idDoVeterinario} foi excluído!");
+        tela.ExibirAviso("Não é possível registrar atendimento sem um veterinario válido.");
         tela.Pausar();
         return;
     }
     
-    // Obter prontuário do paciente
+    // pega prontuario do paciente
     var prontuario = prontuarioCRUD.BuscarPorPaciente(agendamentoSelecionado.idDoPaciente);
     if (prontuario == null)
     {
-        tela.ExibirErro("Prontuário não encontrado para este paciente!");
+        tela.ExibirErro("Prontuario não encontrado para este paciente!");
         tela.Pausar();
         return;
     }
@@ -186,7 +174,7 @@ void RegistrarAtendimento()
     Console.WriteLine($"Procedimento: {agendamentoSelecionado.tipoProcedimento}");
     Console.WriteLine();
     
-    // Coletar dados do atendimento
+    // pega dados do atendimento
     string diagnostico = tela.Perguntar("Diagnóstico: ");
     string tratamento = tela.Perguntar("Tratamento realizado: ");
     string observacoes = tela.Perguntar("Observações: ");
@@ -204,7 +192,7 @@ void RegistrarAtendimento()
     
     if (tela.ConfirmarAcao("\nConfirma o registro do atendimento (S/N)? "))
     {
-        // Criar entrada no histórico clínico
+        // entrada no histórico
         historicoClinicoCRUD.CriarEntradaAtendimento(
             prontuario.id, 
             agendamentoSelecionado.id, 
@@ -219,7 +207,7 @@ void RegistrarAtendimento()
             frequencia
         );
         
-        // Atualizar status do agendamento
+        // atualiza  agendamento
         agendamentoSelecionado.statusDetalhado = "Atendido";
         agendamentoSelecionado.status = "Concluído";
         
@@ -264,10 +252,10 @@ void MenuVeterinario()
     while (true)
     {
         tela.LimparTela();
-        tela.ExibirTitulo("Menu Veterinário");
+        tela.ExibirTitulo("Menu veterinario");
         
         tela.ExibirOpcao("1", "Consultar Agendamentos");
-        tela.ExibirOpcao("2", "Prontuários");
+        tela.ExibirOpcao("2", "Prontuarios");
         tela.ExibirOpcao("3", "Registrar Atendimento");
         tela.ExibirOpcao("4", "Minha Agenda");
         tela.ExibirOpcao("5", "Estoque");
@@ -280,7 +268,7 @@ void MenuVeterinario()
         if (opcao == '1') agendamentoCRUD.ExecutarCRUD();
         if (opcao == '2') prontuarioCRUD.ExecutarCRUD();
         if (opcao == '3') RegistrarAtendimento();
-        if (opcao == '4') agendaCRUD.ExecutarCRUD("Veterinário");
+        if (opcao == '4') agendaCRUD.ExecutarCRUD("veterinario");
         if (opcao == '5') MenuEstoque();
     }
 }
@@ -320,8 +308,8 @@ void MenuGerente()
         
         tela.ExibirOpcao("1", "Tutores");
         tela.ExibirOpcao("2", "Pacientes");
-        tela.ExibirOpcao("3", "Veterinários");
-        tela.ExibirOpcao("4", "Usuários");
+        tela.ExibirOpcao("3", "veterinarios");
+        tela.ExibirOpcao("4", "usuarios");
         tela.ExibirOpcao("5", "Estoque");
         tela.ExibirOpcao("6", "Relatórios");
         tela.ExibirOpcao("7", "Agenda");

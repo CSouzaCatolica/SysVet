@@ -32,7 +32,7 @@ public class RelatoriosCRUD
             
             tela.ExibirOpcao("1", "Agendamentos por Período");
             tela.ExibirOpcao("2", "Pacientes mais Frequentes");
-            tela.ExibirOpcao("3", "Veterinários - Atendimentos");
+            tela.ExibirOpcao("3", "veterinarios - Atendimentos");
             tela.ExibirOpcao("4", "Estoque Baixo");
             tela.ExibirOpcao("5", "Status de Agendamentos");
             tela.ExibirOpcao("0", "Voltar");
@@ -73,7 +73,7 @@ public class RelatoriosCRUD
             return;
         }
         
-        dataFim = dataFim.AddDays(1).AddTicks(-1); // Incluir o dia inteiro
+        dataFim = dataFim.AddDays(1).AddTicks(-1); 
         
         var agendamentosPeriodo = agendamentos.Where(a => a.dataHora >= dataInicio && a.dataHora <= dataFim).ToList();
         
@@ -84,7 +84,7 @@ public class RelatoriosCRUD
         
         if (agendamentosPeriodo.Count > 0)
         {
-            string[] cabecalhos = { "Data", "Hora", "Paciente", "Veterinário", "Procedimento", "Status" };
+            string[] cabecalhos = { "Data", "Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
             foreach (var agendamento in agendamentosPeriodo.OrderBy(a => a.dataHora))
@@ -163,7 +163,7 @@ public class RelatoriosCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Relatório - Veterinários - Atendimentos");
+        Console.WriteLine("Relatório - veterinarios - Atendimentos");
         Console.WriteLine();
         
         var veterinariosAtendimentos = historicos
@@ -176,7 +176,7 @@ public class RelatoriosCRUD
             .OrderByDescending(v => v.QuantidadeAtendimentos)
             .ToList();
         
-        Console.WriteLine("=== ATENDIMENTOS POR VETERINÁRIO ===");
+        Console.WriteLine("=== ATENDIMENTOS POR veterinario ===");
         Console.WriteLine();
         
         if (veterinariosAtendimentos.Count == 0)
@@ -185,7 +185,7 @@ public class RelatoriosCRUD
         }
         else
         {
-            string[] cabecalhos = { "Veterinário", "CRMV", "Especialidade", "Atendimentos", "Último Atendimento" };
+            string[] cabecalhos = { "veterinario", "CRMV", "Especialidade", "Atendimentos", "Último Atendimento" };
             List<string[]> dados = new List<string[]>();
             
             foreach (var vet in veterinariosAtendimentos)
@@ -215,9 +215,8 @@ public class RelatoriosCRUD
         Console.WriteLine("Relatório - Estoque Baixo");
         Console.WriteLine();
         
-        // Simulando estoque baixo - em um sistema real, isso viria de uma tabela de estoque
         var medicamentosBaixo = medicamentos.Where(m => m.estoqueMinimo > 0).ToList();
-        var vacinasBaixo = vacinas.Where(v => true).ToList(); // Todas as vacinas por enquanto
+        var vacinasBaixo = vacinas.Where(v => true).ToList();
         
         Console.WriteLine("=== PRODUTOS COM ESTOQUE BAIXO ===");
         Console.WriteLine();

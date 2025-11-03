@@ -3,7 +3,6 @@ public class Tela
     private int largura, altura;
     private ConsoleColor corTexto, corFundo;
 
-    // New simplified constructor
     public Tela()
     {
         this.largura = 80;
@@ -12,7 +11,6 @@ public class Tela
         this.corFundo = ConsoleColor.Black;
     }
 
-    // Backward compatibility constructors
     public Tela(int lar, int alt)
     {
         this.largura = lar;
@@ -29,7 +27,6 @@ public class Tela
         this.corFundo = fun;
     }
 
-    // New simplified methods
     public void LimparTela()
     {
         Console.BackgroundColor = this.corFundo;
@@ -86,7 +83,6 @@ public class Tela
         Console.WriteLine(mensagem);
     }
 
-    // Backward compatibility methods
     public void PrepararTela()
     {
         Console.BackgroundColor = this.corFundo;
@@ -180,7 +176,6 @@ public class Tela
         return resposta;
     }
 
-    // Métodos auxiliares para escalabilidade
     public void ExibirTabela(string[] cabecalhos, List<string[]> dados)
     {
         if (dados.Count == 0)
@@ -189,7 +184,7 @@ public class Tela
             return;
         }
 
-        // Calcular larguras das colunas
+        // calcula quanto espaço cada coluna precisa
         int[] larguras = new int[cabecalhos.Length];
         for (int i = 0; i < cabecalhos.Length; i++)
         {
@@ -203,7 +198,7 @@ public class Tela
             }
         }
 
-        // Exibir cabeçalho
+        // mostra c abeçalho
         ExibirLinhaSeparadora(larguras);
         for (int i = 0; i < cabecalhos.Length; i++)
         {
@@ -212,7 +207,7 @@ public class Tela
         Console.WriteLine("|");
         ExibirLinhaSeparadora(larguras);
 
-        // Exibir dados
+        // faz as linhas
         foreach (var linha in dados)
         {
             for (int i = 0; i < cabecalhos.Length; i++)

@@ -32,7 +32,7 @@ public class UsuarioCRUD
         while (true)
         {
             tela.LimparTela();
-            Console.WriteLine("Cadastro de Usuários");
+            Console.WriteLine("Cadastro de usuarios");
             Console.WriteLine();
             
             tela.ExibirOpcao("1", "Listar Todos");
@@ -62,12 +62,12 @@ public class UsuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Lista de Usuários");
+        Console.WriteLine("Lista de usuarios");
         Console.WriteLine();
         
         if (this.usuarios.Count == 0)
         {
-            Console.WriteLine("Nenhum usuário cadastrado.");
+            Console.WriteLine("Nenhum usuario cadastrado.");
         }
         else
         {
@@ -79,7 +79,7 @@ public class UsuarioCRUD
                     var veterinario = veterinarioCRUD.GetVeterinarios().FirstOrDefault(v => v.idDoUsuario == usuario.id);
                     statusVeterinario = veterinario != null ? "Sim" : "Não";
                 }
-                Console.WriteLine($"ID: {usuario.id} | Nome: {usuario.nome} | Login: {usuario.login} | Tipo: {usuario.tipoUsuario} | É Veterinário: {statusVeterinario}");
+                Console.WriteLine($"ID: {usuario.id} | Nome: {usuario.nome} | Login: {usuario.login} | Tipo: {usuario.tipoUsuario} | É veterinario: {statusVeterinario}");
             }
         }
         
@@ -92,7 +92,7 @@ public class UsuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Cadastrar Novo Usuário");
+        Console.WriteLine("Cadastrar Novo usuario");
         Console.WriteLine();
         
         int novoId = this.GerarNovoId();
@@ -102,7 +102,7 @@ public class UsuarioCRUD
         if (confirma.ToLower() == "s")
         {
             this.usuarios.Add(new Usuario(novoId, this.usuario.nome, this.usuario.login, this.usuario.senha, this.usuario.tipoUsuario));
-            Console.WriteLine("Usuário cadastrado com sucesso!");
+            Console.WriteLine("usuario cadastrado com sucesso!");
         }
         
         Console.WriteLine("\nPressione qualquer tecla para continuar...");
@@ -114,10 +114,10 @@ public class UsuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Alterar Usuário");
+        Console.WriteLine("Alterar usuario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do usuário a alterar: ");
+        string idInput = tela.Perguntar("Digite o ID do usuario a alterar: ");
         if (!int.TryParse(idInput, out this.usuario.id))
         {
             Console.WriteLine("ID inválido!");
@@ -128,7 +128,7 @@ public class UsuarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            Console.WriteLine("Usuário não encontrado.");
+            Console.WriteLine("usuario não encontrado.");
         }
         else
         {
@@ -142,7 +142,7 @@ public class UsuarioCRUD
             if (confirma.ToLower() == "s")
             {
                 this.usuarios[this.indice] = new Usuario(this.usuario.id, this.usuario.nome, this.usuario.login, this.usuario.senha, this.usuario.tipoUsuario);
-                Console.WriteLine("Usuário alterado com sucesso!");
+                Console.WriteLine("usuario alterado com sucesso!");
             }
         }
         
@@ -155,10 +155,10 @@ public class UsuarioCRUD
         Tela tela = new Tela();
         tela.LimparTela();
         
-        Console.WriteLine("Excluir Usuário");
+        Console.WriteLine("Excluir usuario");
         Console.WriteLine();
         
-        string idInput = tela.Perguntar("Digite o ID do usuário a excluir: ");
+        string idInput = tela.Perguntar("Digite o ID do usuario a excluir: ");
         if (!int.TryParse(idInput, out this.usuario.id))
         {
             Console.WriteLine("ID inválido!");
@@ -169,18 +169,18 @@ public class UsuarioCRUD
         bool achou = this.ProcurarCodigo();
         if (!achou)
         {
-            Console.WriteLine("Usuário não encontrado.");
+            Console.WriteLine("usuario não encontrado.");
         }
         else
         {
-            Console.WriteLine("\nUsuário a ser excluído:");
+            Console.WriteLine("\nusuario a ser excluído:");
             this.MostrarDados();
             
             string confirma = tela.Perguntar("Confirma a exclusão (S/N)? ");
             if (confirma.ToLower() == "s")
             {
                 this.usuarios.RemoveAt(this.indice);
-                Console.WriteLine("Usuário excluído com sucesso!");
+                Console.WriteLine("usuario excluído com sucesso!");
             }
         }
         
@@ -195,7 +195,7 @@ public class UsuarioCRUD
         this.usuario.nome = tela.Perguntar("Nome: ");
         this.usuario.login = tela.Perguntar("Login: ");
         this.usuario.senha = tela.Perguntar("Senha: ");
-        this.usuario.tipoUsuario = tela.Perguntar("Tipo de Usuário: ");
+        this.usuario.tipoUsuario = tela.Perguntar("Tipo de usuario: ");
     }
 
     public bool ProcurarCodigo()
@@ -215,11 +215,11 @@ public class UsuarioCRUD
 
     public void MostrarDados()
     {
-        Console.WriteLine("Usuário encontrado:");
+        Console.WriteLine("usuario encontrado:");
         Console.WriteLine($"Nome: {this.usuarios[this.indice].nome}");
         Console.WriteLine($"Login: {this.usuarios[this.indice].login}");
         Console.WriteLine($"Senha: {this.usuarios[this.indice].senha}");
-        Console.WriteLine($"Tipo de Usuário: {this.usuarios[this.indice].tipoUsuario}");
+        Console.WriteLine($"Tipo de usuario: {this.usuarios[this.indice].tipoUsuario}");
         Console.WriteLine();
     }
 }

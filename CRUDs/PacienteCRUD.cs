@@ -98,7 +98,6 @@ public class PacienteCRUD
         Console.WriteLine("Cadastrar Novo Paciente");
         Console.WriteLine();
         
-        // Validação preventiva - verificar se existem tutores
         if (tutorCRUD == null || tutorCRUD.GetTutores().Count == 0)
         {
             tela.ExibirErro("Não é possível cadastrar paciente: nenhum tutor cadastrado.");
@@ -115,7 +114,7 @@ public class PacienteCRUD
         {
             this.pacientes.Add(new Paciente(novoId, this.paciente.idDoTutor, this.paciente.nome, this.paciente.especie, this.paciente.raca, this.paciente.peso, this.paciente.status));
             
-            // Criar prontuário automaticamente
+            // cria prontuario sozinho
             if (prontuarioCRUD != null)
             {
                 prontuarioCRUD.CriarAutomatico(novoId);
@@ -210,7 +209,6 @@ public class PacienteCRUD
     {
         Tela tela = new Tela();
         
-        // Validação do ID do Tutor
         while (true)
         {
             string idTutorInput = tela.Perguntar("ID do Tutor: ");
@@ -220,7 +218,6 @@ public class PacienteCRUD
                 continue;
             }
             
-            // Verificar se o tutor existe
             if (tutorCRUD != null)
             {
                 var tutorExiste = tutorCRUD.GetTutores().Any(t => t.id == this.paciente.idDoTutor);
@@ -228,7 +225,6 @@ public class PacienteCRUD
                 {
                     tela.ExibirErro($"Tutor com ID {this.paciente.idDoTutor} não encontrado!");
                     
-                    // Mostrar tutores disponíveis
                     Console.WriteLine("\nTutores disponíveis:");
                     if (tutorCRUD.GetTutores().Count > 0)
                     {
@@ -261,12 +257,11 @@ public class PacienteCRUD
         this.paciente.especie = tela.Perguntar("Espécie: ");
         this.paciente.raca = tela.Perguntar("Raça: ");
         
-        // Validação do peso com loop
         while (true)
         {
             string pesoInput = tela.Perguntar("Peso (kg): ");
             
-            // Remover "kg" se presente e converter vírgula para ponto
+            // tira "kg" se tiver e troca virgula por ponto
             string pesoLimpo = pesoInput.Replace("kg", "").Replace("KG", "").Replace(" ", "").Replace(",", ".");
             
             if (double.TryParse(pesoLimpo, out double peso))
@@ -299,7 +294,6 @@ public class PacienteCRUD
             {
                 encontrei = true;
                 this.indice = i;
-                // Atualizar o objeto paciente com os dados encontrados
                 this.paciente = this.pacientes[i];
                 break;
             }
@@ -349,18 +343,18 @@ public class PacienteCRUD
             if (prontuario != null)
             {
                 Console.WriteLine("\n=== PRONTUÁRIO ===");
-                Console.WriteLine($"ID do Prontuário: {prontuario.id}");
+                Console.WriteLine($"ID do Prontuario: {prontuario.id}");
                 Console.WriteLine($"Data de Abertura: {prontuario.dataAbertura:dd/MM/yyyy}");
                 Console.WriteLine($"Status: {(prontuario.ativo ? "Ativo" : "Inativo")}");
                 
-                // Mostrar histórico clínico recente (últimas 3 entradas)
+                //  histórico clínico recente 3
                 Console.WriteLine("\n=== HISTÓRICO CLÍNICO RECENTE ===");
-                Console.WriteLine("(Para visualizar histórico completo, use o menu Prontuários)");
+                Console.WriteLine("(Para visualizar histórico completo, use o menu Prontuarios)");
             }
             else
             {
                 Console.WriteLine("\n=== PRONTUÁRIO ===");
-                Console.WriteLine("Nenhum prontuário encontrado para este paciente.");
+                Console.WriteLine("Nenhum prontuario encontrado para este paciente.");
             }
 
         }
