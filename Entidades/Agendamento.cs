@@ -23,20 +23,10 @@ public class Agendamento
         this.statusDetalhado = "Agendado";
     }
 
-    public Agendamento(int id, int idDoPaciente, int idDoVeterinario, int idDaSala, DateTime dataHora, int duracao, string tipoProcedimento, string status)
-    {
-        this.id = id;
-        this.idDoPaciente = idDoPaciente;
-        this.idDoVeterinario = idDoVeterinario;
-        this.idDaSala = idDaSala;
-        this.dataHora = dataHora;
-        this.duracao = duracao;
-        this.tipoProcedimento = tipoProcedimento;
-        this.status = status;
-        this.statusDetalhado = status;
+    public Agendamento(int id, int idDoPaciente, int idDoVeterinario, int idDaSala, DateTime dataHora, int duracao, string tipoProcedimento, string status): this(id, idDoPaciente, idDoVeterinario, idDaSala, dataHora, duracao, tipoProcedimento, status, status){
     }
 
-    public Agendamento(int id, int idDoPaciente, int idDoVeterinario, int idDaSala, DateTime dataHora, int duracao, string tipoProcedimento, string status, string statusDetalhado)
+    public Agendamento(int id, int idDoPaciente, int idDoVeterinario, int idDaSala,DateTime dataHora, int duracao, string tipoProcedimento, string status, string statusDetalhado)
     {
         this.id = id;
         this.idDoPaciente = idDoPaciente;
