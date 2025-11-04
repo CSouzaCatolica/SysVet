@@ -286,7 +286,15 @@ public class TutorCRUD
             Console.WriteLine("\n=== DETALHES DO TUTOR ===");
             this.MostrarDados();
          
-            var petsDoTutor = pacienteCRUD.GetPacientes().Where(p => p.idDoTutor == this.tutor.id).ToList();
+            List<Paciente> petsDoTutor = new List<Paciente>();
+            List<Paciente> todosPacientes = pacienteCRUD.GetPacientes();
+            for (int i = 0; i < todosPacientes.Count; i++)
+            {
+                if (todosPacientes[i].idDoTutor == this.tutor.id)
+                {
+                    petsDoTutor.Add(todosPacientes[i]);
+                }
+            }
             
             Console.WriteLine("\n=== PETS DO TUTOR ===");
             if (petsDoTutor.Count == 0)

@@ -220,7 +220,16 @@ public class PacienteCRUD
             
             if (tutorCRUD != null)
             {
-                var tutorExiste = tutorCRUD.GetTutores().Any(t => t.id == this.paciente.idDoTutor);
+                bool tutorExiste = false;
+                List<Tutor> listaTutores = tutorCRUD.GetTutores();
+                for (int i = 0; i < listaTutores.Count; i++)
+                {
+                    if (listaTutores[i].id == this.paciente.idDoTutor)
+                    {
+                        tutorExiste = true;
+                        break;
+                    }
+                }
                 if (!tutorExiste)
                 {
                     tela.ExibirErro($"Tutor com ID {this.paciente.idDoTutor} não encontrado!");
@@ -345,7 +354,16 @@ public class PacienteCRUD
                 Console.WriteLine("\n=== PRONTUÁRIO ===");
                 Console.WriteLine($"ID do Prontuario: {prontuario.id}");
                 Console.WriteLine($"Data de Abertura: {prontuario.dataAbertura:dd/MM/yyyy}");
-                Console.WriteLine($"Status: {(prontuario.ativo ? "Ativo" : "Inativo")}");
+                string statusProntuario;
+                if (prontuario.ativo)
+                {
+                    statusProntuario = "Ativo";
+                }
+                else
+                {
+                    statusProntuario = "Inativo";
+                }
+                Console.WriteLine($"Status: {statusProntuario}");
                 
                 //  histórico clínico recente 3
                 Console.WriteLine("\n=== HISTÓRICO CLÍNICO RECENTE ===");

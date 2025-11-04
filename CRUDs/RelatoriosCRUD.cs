@@ -1,3 +1,24 @@
+public class PacienteFrequencia
+{
+    public int IdProntuario { get; set; }
+    public int QuantidadeAtendimentos { get; set; }
+    public DateTime UltimoAtendimento { get; set; }
+}
+
+public class VeterinarioAtendimento
+{
+    public int IdVeterinario { get; set; }
+    public int QuantidadeAtendimentos { get; set; }
+    public DateTime UltimoAtendimento { get; set; }
+}
+
+public class StatusAgendamento
+{
+    public string Status { get; set; }
+    public int Quantidade { get; set; }
+    public double Percentual { get; set; }
+}
+
 public class RelatoriosCRUD
 {
     private List<Agendamento> agendamentos;
@@ -16,6 +37,94 @@ public class RelatoriosCRUD
         this.historicos = historicos;
         this.medicamentos = medicamentos;
         this.vacinas = vacinas;
+    }
+
+    private Paciente BuscarPacientePorId(int id)
+    {
+        for (int i = 0; i < this.pacientes.Count; i++)
+        {
+            if (this.pacientes[i].id == id)
+            {
+                return this.pacientes[i];
+            }
+        }
+        return null;
+    }
+
+    private Veterinario BuscarVeterinarioPorId(int id)
+    {
+        for (int i = 0; i < this.veterinarios.Count; i++)
+        {
+            if (this.veterinarios[i].id == id)
+            {
+                return this.veterinarios[i];
+            }
+        }
+        return null;
+    }
+
+    private void OrdenarAgendamentosPorData(List<Agendamento> lista)
+    {
+        for (int i = 0; i < lista.Count - 1; i++)
+        {
+            for (int j = 0; j < lista.Count - 1 - i; j++)
+            {
+                if (lista[j].dataHora > lista[j + 1].dataHora)
+                {
+                    Agendamento temp = lista[j];
+                    lista[j] = lista[j + 1];
+                    lista[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    private void OrdenarPacienteFrequenciaDesc(List<PacienteFrequencia> lista)
+    {
+        for (int i = 0; i < lista.Count - 1; i++)
+        {
+            for (int j = 0; j < lista.Count - 1 - i; j++)
+            {
+                if (lista[j].QuantidadeAtendimentos < lista[j + 1].QuantidadeAtendimentos)
+                {
+                    PacienteFrequencia temp = lista[j];
+                    lista[j] = lista[j + 1];
+                    lista[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    private void OrdenarVeterinarioAtendimentoDesc(List<VeterinarioAtendimento> lista)
+    {
+        for (int i = 0; i < lista.Count - 1; i++)
+        {
+            for (int j = 0; j < lista.Count - 1 - i; j++)
+            {
+                if (lista[j].QuantidadeAtendimentos < lista[j + 1].QuantidadeAtendimentos)
+                {
+                    VeterinarioAtendimento temp = lista[j];
+                    lista[j] = lista[j + 1];
+                    lista[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    private void OrdenarStatusAgendamentoDesc(List<StatusAgendamento> lista)
+    {
+        for (int i = 0; i < lista.Count - 1; i++)
+        {
+            for (int j = 0; j < lista.Count - 1 - i; j++)
+            {
+                if (lista[j].Quantidade < lista[j + 1].Quantidade)
+                {
+                    StatusAgendamento temp = lista[j];
+                    lista[j] = lista[j + 1];
+                    lista[j + 1] = temp;
+                }
+            }
+        }
     }
 
     public void ExecutarCRUD()
@@ -75,7 +184,16 @@ public class RelatoriosCRUD
         
         dataFim = dataFim.AddDays(1).AddTicks(-1); 
         
-        var agendamentosPeriodo = agendamentos.Where(a => a.dataHora >= dataInicio && a.dataHora <= dataFim).ToList();
+        List<Agendamento> agendamentosPeriodo = new List<Agendamento>();
+        for (int i = 0; i < agendamentos.Count; i++)
+        {
+            if (agendamentos[i].dataHora >= dataInicio && agendamentos[i].dataHora <= dataFim)
+            {
+                agendamentosPeriodo.Add(agendamentos[i]);
+            }
+        }
+        
+        OrdenarAgendamentosPorData(agendamentosPeriodo);
         
         Console.WriteLine($"\n=== RELATÓRIO DE AGENDAMENTOS ===");
         Console.WriteLine($"Período: {dataInicio:dd/MM/yyyy} a {dataFim:dd/MM/yyyy}");
@@ -87,16 +205,37 @@ public class RelatoriosCRUD
             string[] cabecalhos = { "Data", "Hora", "Paciente", "veterinario", "Procedimento", "Status" };
             List<string[]> dados = new List<string[]>();
             
-            foreach (var agendamento in agendamentosPeriodo.OrderBy(a => a.dataHora))
+            for (int i = 0; i < agendamentosPeriodo.Count; i++)
             {
-                var paciente = pacientes.FirstOrDefault(p => p.id == agendamento.idDoPaciente);
-                var veterinario = veterinarios.FirstOrDefault(v => v.id == agendamento.idDoVeterinario);
+                Agendamento agendamento = agendamentosPeriodo[i];
+                Paciente paciente = BuscarPacientePorId(agendamento.idDoPaciente);
+                Veterinario veterinario = BuscarVeterinarioPorId(agendamento.idDoVeterinario);
+                
+                string nomePaciente;
+                if (paciente != null)
+                {
+                    nomePaciente = paciente.nome;
+                }
+                else
+                {
+                    nomePaciente = "N/A";
+                }
+                
+                string nomeVeterinario;
+                if (veterinario != null)
+                {
+                    nomeVeterinario = veterinario.nome;
+                }
+                else
+                {
+                    nomeVeterinario = "N/A";
+                }
                 
                 dados.Add(new string[] {
                     agendamento.dataHora.ToString("dd/MM/yyyy"),
                     agendamento.dataHora.ToString("HH:mm"),
-                    paciente?.nome ?? "N/A",
-                    veterinario?.nome ?? "N/A",
+                    nomePaciente,
+                    nomeVeterinario,
                     agendamento.tipoProcedimento,
                     agendamento.statusDetalhado
                 });
@@ -116,21 +255,63 @@ public class RelatoriosCRUD
         Console.WriteLine("Relatório - Pacientes mais Frequentes");
         Console.WriteLine();
         
-        var pacientesFrequencia = historicos
-            .GroupBy(h => h.idDoProntuario)
-            .Select(g => new {
-                IdProntuario = g.Key,
-                QuantidadeAtendimentos = g.Count(),
-                UltimoAtendimento = g.Max(h => h.dataAtendimento)
-            })
-            .OrderByDescending(p => p.QuantidadeAtendimentos)
-            .Take(10)
-            .ToList();
+        Dictionary<int, int> contadorAtendimentos = new Dictionary<int, int>();
+        Dictionary<int, DateTime> ultimoAtendimento = new Dictionary<int, DateTime>();
+        
+        for (int i = 0; i < historicos.Count; i++)
+        {
+            int idProntuario = historicos[i].idDoProntuario;
+            
+            if (contadorAtendimentos.ContainsKey(idProntuario))
+            {
+                contadorAtendimentos[idProntuario] = contadorAtendimentos[idProntuario] + 1;
+            }
+            else
+            {
+                contadorAtendimentos[idProntuario] = 1;
+            }
+            
+            if (ultimoAtendimento.ContainsKey(idProntuario))
+            {
+                if (historicos[i].dataAtendimento > ultimoAtendimento[idProntuario])
+                {
+                    ultimoAtendimento[idProntuario] = historicos[i].dataAtendimento;
+                }
+            }
+            else
+            {
+                ultimoAtendimento[idProntuario] = historicos[i].dataAtendimento;
+            }
+        }
+        
+        List<PacienteFrequencia> pacientesFrequencia = new List<PacienteFrequencia>();
+        foreach (int idProntuario in contadorAtendimentos.Keys)
+        {
+            PacienteFrequencia pf = new PacienteFrequencia();
+            pf.IdProntuario = idProntuario;
+            pf.QuantidadeAtendimentos = contadorAtendimentos[idProntuario];
+            pf.UltimoAtendimento = ultimoAtendimento[idProntuario];
+            pacientesFrequencia.Add(pf);
+        }
+        
+        OrdenarPacienteFrequenciaDesc(pacientesFrequencia);
+        
+        List<PacienteFrequencia> top10 = new List<PacienteFrequencia>();
+        int limite = 10;
+        if (pacientesFrequencia.Count < limite)
+        {
+            limite = pacientesFrequencia.Count;
+        }
+        
+        for (int i = 0; i < limite; i++)
+        {
+            top10.Add(pacientesFrequencia[i]);
+        }
         
         Console.WriteLine("=== TOP 10 PACIENTES MAIS FREQUENTES ===");
         Console.WriteLine();
         
-        if (pacientesFrequencia.Count == 0)
+        if (top10.Count == 0)
         {
             Console.WriteLine("Nenhum atendimento registrado.");
         }
@@ -139,14 +320,24 @@ public class RelatoriosCRUD
             string[] cabecalhos = { "Posição", "Paciente", "Atendimentos", "Último Atendimento" };
             List<string[]> dados = new List<string[]>();
             
-            for (int i = 0; i < pacientesFrequencia.Count; i++)
+            for (int i = 0; i < top10.Count; i++)
             {
-                var prontuario = pacientesFrequencia[i];
-                var paciente = pacientes.FirstOrDefault(p => p.id == prontuario.IdProntuario);
+                PacienteFrequencia prontuario = top10[i];
+                Paciente paciente = BuscarPacientePorId(prontuario.IdProntuario);
+                
+                string nomePaciente;
+                if (paciente != null)
+                {
+                    nomePaciente = paciente.nome;
+                }
+                else
+                {
+                    nomePaciente = "N/A";
+                }
                 
                 dados.Add(new string[] {
                     (i + 1).ToString(),
-                    paciente?.nome ?? "N/A",
+                    nomePaciente,
                     prontuario.QuantidadeAtendimentos.ToString(),
                     prontuario.UltimoAtendimento.ToString("dd/MM/yyyy")
                 });
@@ -166,15 +357,46 @@ public class RelatoriosCRUD
         Console.WriteLine("Relatório - veterinarios - Atendimentos");
         Console.WriteLine();
         
-        var veterinariosAtendimentos = historicos
-            .GroupBy(h => h.idDoVeterinario)
-            .Select(g => new {
-                IdVeterinario = g.Key,
-                QuantidadeAtendimentos = g.Count(),
-                UltimoAtendimento = g.Max(h => h.dataAtendimento)
-            })
-            .OrderByDescending(v => v.QuantidadeAtendimentos)
-            .ToList();
+        Dictionary<int, int> contadorAtendimentos = new Dictionary<int, int>();
+        Dictionary<int, DateTime> ultimoAtendimento = new Dictionary<int, DateTime>();
+        
+        for (int i = 0; i < historicos.Count; i++)
+        {
+            int idVeterinario = historicos[i].idDoVeterinario;
+            
+            if (contadorAtendimentos.ContainsKey(idVeterinario))
+            {
+                contadorAtendimentos[idVeterinario] = contadorAtendimentos[idVeterinario] + 1;
+            }
+            else
+            {
+                contadorAtendimentos[idVeterinario] = 1;
+            }
+            
+            if (ultimoAtendimento.ContainsKey(idVeterinario))
+            {
+                if (historicos[i].dataAtendimento > ultimoAtendimento[idVeterinario])
+                {
+                    ultimoAtendimento[idVeterinario] = historicos[i].dataAtendimento;
+                }
+            }
+            else
+            {
+                ultimoAtendimento[idVeterinario] = historicos[i].dataAtendimento;
+            }
+        }
+        
+        List<VeterinarioAtendimento> veterinariosAtendimentos = new List<VeterinarioAtendimento>();
+        foreach (int idVeterinario in contadorAtendimentos.Keys)
+        {
+            VeterinarioAtendimento va = new VeterinarioAtendimento();
+            va.IdVeterinario = idVeterinario;
+            va.QuantidadeAtendimentos = contadorAtendimentos[idVeterinario];
+            va.UltimoAtendimento = ultimoAtendimento[idVeterinario];
+            veterinariosAtendimentos.Add(va);
+        }
+        
+        OrdenarVeterinarioAtendimentoDesc(veterinariosAtendimentos);
         
         Console.WriteLine("=== ATENDIMENTOS POR veterinario ===");
         Console.WriteLine();
@@ -188,14 +410,45 @@ public class RelatoriosCRUD
             string[] cabecalhos = { "veterinario", "CRMV", "Especialidade", "Atendimentos", "Último Atendimento" };
             List<string[]> dados = new List<string[]>();
             
-            foreach (var vet in veterinariosAtendimentos)
+            for (int i = 0; i < veterinariosAtendimentos.Count; i++)
             {
-                var veterinario = veterinarios.FirstOrDefault(v => v.id == vet.IdVeterinario);
+                VeterinarioAtendimento vet = veterinariosAtendimentos[i];
+                Veterinario veterinario = BuscarVeterinarioPorId(vet.IdVeterinario);
+                
+                string nomeVeterinario;
+                if (veterinario != null)
+                {
+                    nomeVeterinario = veterinario.nome;
+                }
+                else
+                {
+                    nomeVeterinario = "N/A";
+                }
+                
+                string crmvVeterinario;
+                if (veterinario != null)
+                {
+                    crmvVeterinario = veterinario.crmv;
+                }
+                else
+                {
+                    crmvVeterinario = "N/A";
+                }
+                
+                string especialidadeVeterinario;
+                if (veterinario != null)
+                {
+                    especialidadeVeterinario = veterinario.especialidade;
+                }
+                else
+                {
+                    especialidadeVeterinario = "N/A";
+                }
                 
                 dados.Add(new string[] {
-                    veterinario?.nome ?? "N/A",
-                    veterinario?.crmv ?? "N/A",
-                    veterinario?.especialidade ?? "N/A",
+                    nomeVeterinario,
+                    crmvVeterinario,
+                    especialidadeVeterinario,
                     vet.QuantidadeAtendimentos.ToString(),
                     vet.UltimoAtendimento.ToString("dd/MM/yyyy")
                 });
@@ -215,8 +468,20 @@ public class RelatoriosCRUD
         Console.WriteLine("Relatório - Estoque Baixo");
         Console.WriteLine();
         
-        var medicamentosBaixo = medicamentos.Where(m => m.estoqueMinimo > 0).ToList();
-        var vacinasBaixo = vacinas.Where(v => true).ToList();
+        List<Medicamento> medicamentosBaixo = new List<Medicamento>();
+        for (int i = 0; i < medicamentos.Count; i++)
+        {
+            if (medicamentos[i].estoqueMinimo > 0)
+            {
+                medicamentosBaixo.Add(medicamentos[i]);
+            }
+        }
+        
+        List<Vacina> vacinasBaixo = new List<Vacina>();
+        for (int i = 0; i < vacinas.Count; i++)
+        {
+            vacinasBaixo.Add(vacinas[i]);
+        }
         
         Console.WriteLine("=== PRODUTOS COM ESTOQUE BAIXO ===");
         Console.WriteLine();
@@ -230,18 +495,31 @@ public class RelatoriosCRUD
             string[] cabecalhos = { "Tipo", "Nome", "Estoque Mínimo", "Status" };
             List<string[]> dados = new List<string[]>();
             
-            foreach (var medicamento in medicamentosBaixo)
+            for (int i = 0; i < medicamentosBaixo.Count; i++)
             {
+                Medicamento medicamento = medicamentosBaixo[i];
+                
+                string statusMedicamento;
+                if (medicamento.controlado)
+                {
+                    statusMedicamento = "Controlado";
+                }
+                else
+                {
+                    statusMedicamento = "Livre";
+                }
+                
                 dados.Add(new string[] {
                     "Medicamento",
                     medicamento.nome,
                     medicamento.estoqueMinimo.ToString(),
-                    medicamento.controlado ? "Controlado" : "Livre"
+                    statusMedicamento
                 });
             }
             
-            foreach (var vacina in vacinasBaixo)
+            for (int i = 0; i < vacinasBaixo.Count; i++)
             {
+                Vacina vacina = vacinasBaixo[i];
                 dados.Add(new string[] {
                     "Vacina",
                     vacina.nome,
@@ -264,15 +542,44 @@ public class RelatoriosCRUD
         Console.WriteLine("Relatório - Status de Agendamentos");
         Console.WriteLine();
         
-        var statusAgendamentos = agendamentos
-            .GroupBy(a => a.statusDetalhado)
-            .Select(g => new {
-                Status = g.Key,
-                Quantidade = g.Count(),
-                Percentual = (double)g.Count() / agendamentos.Count * 100
-            })
-            .OrderByDescending(s => s.Quantidade)
-            .ToList();
+        Dictionary<string, int> contadorStatus = new Dictionary<string, int>();
+        
+        for (int i = 0; i < agendamentos.Count; i++)
+        {
+            string status = agendamentos[i].statusDetalhado;
+            
+            if (contadorStatus.ContainsKey(status))
+            {
+                contadorStatus[status] = contadorStatus[status] + 1;
+            }
+            else
+            {
+                contadorStatus[status] = 1;
+            }
+        }
+        
+        List<StatusAgendamento> statusAgendamentos = new List<StatusAgendamento>();
+        int totalAgendamentos = agendamentos.Count;
+        
+        foreach (string status in contadorStatus.Keys)
+        {
+            StatusAgendamento sa = new StatusAgendamento();
+            sa.Status = status;
+            sa.Quantidade = contadorStatus[status];
+            
+            if (totalAgendamentos > 0)
+            {
+                sa.Percentual = (double)sa.Quantidade / totalAgendamentos * 100;
+            }
+            else
+            {
+                sa.Percentual = 0;
+            }
+            
+            statusAgendamentos.Add(sa);
+        }
+        
+        OrdenarStatusAgendamentoDesc(statusAgendamentos);
         
         Console.WriteLine("=== DISTRIBUIÇÃO POR STATUS ===");
         Console.WriteLine($"Total de Agendamentos: {agendamentos.Count}");
@@ -287,8 +594,9 @@ public class RelatoriosCRUD
             string[] cabecalhos = { "Status", "Quantidade", "Percentual" };
             List<string[]> dados = new List<string[]>();
             
-            foreach (var status in statusAgendamentos)
+            for (int i = 0; i < statusAgendamentos.Count; i++)
             {
+                StatusAgendamento status = statusAgendamentos[i];
                 dados.Add(new string[] {
                     status.Status,
                     status.Quantidade.ToString(),

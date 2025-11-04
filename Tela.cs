@@ -212,7 +212,15 @@ public class Tela
         {
             for (int i = 0; i < cabecalhos.Length; i++)
             {
-                string valor = i < linha.Length ? linha[i] : "";
+                string valor;
+                if (i < linha.Length)
+                {
+                    valor = linha[i];
+                }
+                else
+                {
+                    valor = "";
+                }
                 Console.Write($"| {valor.PadRight(larguras[i])} ");
             }
             Console.WriteLine("|");
