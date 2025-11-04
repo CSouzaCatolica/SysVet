@@ -13,14 +13,8 @@ public class Vacina
         this.quantidadeEstoque = 0;
     }
 
-    public Vacina(int id, string nome, int periodicidade)
-    {
-        this.id = id;
-        this.nome = nome;
-        this.periodicidade = periodicidade;
-        this.quantidadeEstoque = 0;
+    public Vacina(int id, string nome, int periodicidade): this(id, nome, periodicidade, 0){
     }
-
     public Vacina(int id, string nome, int periodicidade, int quantidadeEstoque)
     {
         this.id = id;

@@ -15,13 +15,7 @@ public class Medicamento
         this.quantidadeEstoque = 0;
     }
 
-    public Medicamento(int id, string nome, bool controlado, int estoqueMinimo)
-    {
-        this.id = id;
-        this.nome = nome;
-        this.controlado = controlado;
-        this.estoqueMinimo = estoqueMinimo;
-        this.quantidadeEstoque = 0;
+    public Medicamento(int id, string nome, bool controlado, int estoqueMinimo): this(id, nome, controlado, estoqueMinimo, 0){
     }
 
     public Medicamento(int id, string nome, bool controlado, int estoqueMinimo, int quantidadeEstoque)
