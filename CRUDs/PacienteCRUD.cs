@@ -134,6 +134,7 @@ public class PacienteCRUD
         Console.WriteLine("Alterar Paciente");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do paciente a alterar: ");
         if (!int.TryParse(idInput, out this.paciente.id))
         {
@@ -175,6 +176,7 @@ public class PacienteCRUD
         Console.WriteLine("Excluir Paciente");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do paciente a excluir: ");
         if (!int.TryParse(idInput, out this.paciente.id))
         {
@@ -296,6 +298,7 @@ public class PacienteCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.pacientes.Count; i++)
         {
@@ -303,7 +306,6 @@ public class PacienteCRUD
             {
                 encontrei = true;
                 this.indice = i;
-                this.paciente = this.pacientes[i];
                 break;
             }
         }
@@ -312,6 +314,12 @@ public class PacienteCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.pacientes.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("Paciente encontrado:");
         Console.WriteLine($"ID do Tutor: {this.pacientes[this.indice].idDoTutor}");
         Console.WriteLine($"Nome: {this.pacientes[this.indice].nome}");
@@ -330,6 +338,7 @@ public class PacienteCRUD
         Console.WriteLine("Visualizar Detalhes do Paciente");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do paciente: ");
         if (!int.TryParse(idInput, out this.paciente.id))
         {

@@ -189,6 +189,7 @@ public class VeterinarioCRUD
         Console.WriteLine("Alterar veterinario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do veterinario a alterar: ");
         if (!int.TryParse(idInput, out this.veterinario.id))
         {
@@ -230,6 +231,7 @@ public class VeterinarioCRUD
         Console.WriteLine("Excluir veterinario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do veterinario a excluir: ");
         if (!int.TryParse(idInput, out this.veterinario.id))
         {
@@ -328,6 +330,7 @@ public class VeterinarioCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.veterinarios.Count; i++)
         {
@@ -343,6 +346,12 @@ public class VeterinarioCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.veterinarios.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("veterinario encontrado:");
         Console.WriteLine($"Nome: {this.veterinarios[this.indice].nome}");
         Console.WriteLine($"CRMV: {this.veterinarios[this.indice].crmv}");
@@ -373,6 +382,7 @@ public class VeterinarioCRUD
         Console.WriteLine("Visualizar Detalhes do veterinario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do veterinario: ");
         if (!int.TryParse(idInput, out this.veterinario.id))
         {

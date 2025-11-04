@@ -106,6 +106,7 @@ public class VacinaCRUD
         Console.WriteLine("Alterar Vacina");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID da vacina a alterar: ");
         if (!int.TryParse(idInput, out this.vacina.id))
         {
@@ -147,6 +148,7 @@ public class VacinaCRUD
         Console.WriteLine("Excluir Vacina");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID da vacina a excluir: ");
         if (!int.TryParse(idInput, out this.vacina.id))
         {
@@ -193,6 +195,7 @@ public class VacinaCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.vacinas.Count; i++)
         {
@@ -208,6 +211,12 @@ public class VacinaCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.vacinas.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("Vacina encontrada:");
         Console.WriteLine($"Nome: {this.vacinas[this.indice].nome}");
         Console.WriteLine($"Periodicidade: {this.vacinas[this.indice].periodicidade} dias");
@@ -223,6 +232,7 @@ public class VacinaCRUD
         Console.WriteLine("Visualizar Detalhes da Vacina");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID da vacina: ");
         if (!int.TryParse(idInput, out this.vacina.id))
         {

@@ -177,6 +177,7 @@ public class HistoricoClinicoCRUD
         Console.WriteLine("Alterar Histórico Clínico");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do histórico a alterar: ");
         if (!int.TryParse(idInput, out this.historico.id))
         {
@@ -220,6 +221,7 @@ public class HistoricoClinicoCRUD
         Console.WriteLine("Excluir Histórico Clínico");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do histórico a excluir: ");
         if (!int.TryParse(idInput, out this.historico.id))
         {
@@ -256,6 +258,7 @@ public class HistoricoClinicoCRUD
         Console.WriteLine("Visualizar Detalhes do Histórico Clínico");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do histórico: ");
         if (!int.TryParse(idInput, out this.historico.id))
         {
@@ -484,6 +487,7 @@ public class HistoricoClinicoCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.historicos.Count; i++)
         {
@@ -499,6 +503,12 @@ public class HistoricoClinicoCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.historicos.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("Histórico encontrado:");
         Console.WriteLine($"ID: {this.historicos[this.indice].id}");
         Console.WriteLine($"ID do Prontuário: {this.historicos[this.indice].idDoProntuario}");
