@@ -115,6 +115,7 @@ public class MedicamentoCRUD
         Console.WriteLine("Alterar Medicamento");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do medicamento a alterar: ");
         if (!int.TryParse(idInput, out this.medicamento.id))
         {
@@ -156,6 +157,7 @@ public class MedicamentoCRUD
         Console.WriteLine("Excluir Medicamento");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do medicamento a excluir: ");
         if (!int.TryParse(idInput, out this.medicamento.id))
         {
@@ -209,6 +211,7 @@ public class MedicamentoCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.medicamentos.Count; i++)
         {
@@ -224,6 +227,12 @@ public class MedicamentoCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.medicamentos.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("Medicamento encontrado:");
         Console.WriteLine($"Nome: {this.medicamentos[this.indice].nome}");
         string controladoTexto;
@@ -249,6 +258,7 @@ public class MedicamentoCRUD
         Console.WriteLine("Visualizar Detalhes do Medicamento");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do medicamento: ");
         if (!int.TryParse(idInput, out this.medicamento.id))
         {

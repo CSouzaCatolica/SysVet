@@ -142,6 +142,7 @@ public class UsuarioCRUD
         Console.WriteLine("Alterar usuario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do usuario a alterar: ");
         if (!int.TryParse(idInput, out this.usuario.id))
         {
@@ -183,6 +184,7 @@ public class UsuarioCRUD
         Console.WriteLine("Excluir usuario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do usuario a excluir: ");
         if (!int.TryParse(idInput, out this.usuario.id))
         {
@@ -225,6 +227,7 @@ public class UsuarioCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.usuarios.Count; i++)
         {
@@ -240,6 +243,12 @@ public class UsuarioCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.usuarios.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("usuario encontrado:");
         Console.WriteLine($"Nome: {this.usuarios[this.indice].nome}");
         Console.WriteLine($"Login: {this.usuarios[this.indice].login}");

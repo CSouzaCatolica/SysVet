@@ -146,6 +146,7 @@ public class ProntuarioCRUD
         Console.WriteLine("Alterar Prontuario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do prontuario a alterar: ");
         if (!int.TryParse(idInput, out this.prontuario.id))
         {
@@ -185,6 +186,7 @@ public class ProntuarioCRUD
         Console.WriteLine("Excluir Prontuario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do prontuario a excluir: ");
         if (!int.TryParse(idInput, out this.prontuario.id))
         {
@@ -221,6 +223,7 @@ public class ProntuarioCRUD
         Console.WriteLine("Visualizar Detalhes do Prontuario");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do prontuario: ");
         if (!int.TryParse(idInput, out this.prontuario.id))
         {
@@ -369,6 +372,7 @@ public class ProntuarioCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.prontuarios.Count; i++)
         {
@@ -384,6 +388,12 @@ public class ProntuarioCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.prontuarios.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("Prontuario encontrado:");
         Console.WriteLine($"ID: {this.prontuarios[this.indice].id}");
         Console.WriteLine($"ID do Paciente: {this.prontuarios[this.indice].idDoPaciente}");

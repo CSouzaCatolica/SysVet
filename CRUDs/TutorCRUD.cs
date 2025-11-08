@@ -113,6 +113,7 @@ public class TutorCRUD
         Console.WriteLine("Alterar Tutor");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do tutor a alterar: ");
         if (!int.TryParse(idInput, out this.tutor.id))
         {
@@ -154,6 +155,7 @@ public class TutorCRUD
         Console.WriteLine("Excluir Tutor");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do tutor a excluir: ");
         if (!int.TryParse(idInput, out this.tutor.id))
         {
@@ -235,6 +237,7 @@ public class TutorCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.tutores.Count; i++)
         {
@@ -242,7 +245,6 @@ public class TutorCRUD
             {
                 encontrei = true;
                 this.indice = i;
-                this.tutor = this.tutores[i];
                 break;
             }
         }
@@ -251,6 +253,12 @@ public class TutorCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.tutores.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("Tutor encontrado:");
         Console.WriteLine($"Nome: {this.tutores[this.indice].nome}");
         Console.WriteLine($"CPF: {this.tutores[this.indice].cpf}");
@@ -268,6 +276,7 @@ public class TutorCRUD
         Console.WriteLine("Visualizar Detalhes do Tutor");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do tutor: ");
         if (!int.TryParse(idInput, out this.tutor.id))
         {

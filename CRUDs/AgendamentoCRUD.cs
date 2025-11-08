@@ -174,6 +174,7 @@ public class AgendamentoCRUD
         Console.WriteLine("Alterar Agendamento");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do agendamento a alterar: ");
         if (!int.TryParse(idInput, out this.agendamento.id))
         {
@@ -215,6 +216,7 @@ public class AgendamentoCRUD
         Console.WriteLine("Excluir Agendamento");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do agendamento a excluir: ");
         if (!int.TryParse(idInput, out this.agendamento.id))
         {
@@ -392,6 +394,7 @@ public class AgendamentoCRUD
 
     public bool ProcurarCodigo()
     {
+        this.indice = -1;
         bool encontrei = false;
         for (int i = 0; i < this.agendamentos.Count; i++)
         {
@@ -399,8 +402,6 @@ public class AgendamentoCRUD
             {
                 encontrei = true;
                 this.indice = i;
-                // atualiza os dados do agendamento que achou
-                this.agendamento = this.agendamentos[i];
                 break;
             }
         }
@@ -421,6 +422,12 @@ public class AgendamentoCRUD
 
     public void MostrarDados()
     {
+        if (this.indice < 0 || this.indice >= this.agendamentos.Count)
+        {
+            Console.WriteLine("Erro: índice inválido.");
+            return;
+        }
+        
         Console.WriteLine("Agendamento encontrado:");
         Console.WriteLine($"ID do Paciente: {this.agendamentos[this.indice].idDoPaciente}");
         Console.WriteLine($"ID do Veterinário: {this.agendamentos[this.indice].idDoVeterinario}");
@@ -440,6 +447,7 @@ public class AgendamentoCRUD
         Console.WriteLine("Visualizar Detalhes do Agendamento");
         Console.WriteLine();
         
+        this.indice = -1;
         string idInput = tela.Perguntar("Digite o ID do agendamento: ");
         if (!int.TryParse(idInput, out this.agendamento.id))
         {
